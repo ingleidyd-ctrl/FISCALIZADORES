@@ -179,28 +179,31 @@
                 miembros.filter(m => (m.nombre && m.nombre.toLowerCase().includes(txt)) || (m.ciudad && m.ciudad.toLowerCase().includes(txt)) || (m.cong && m.cong.toLowerCase().includes(txt))).forEach(m => {
                     grid.innerHTML += `<div class="card-folder">
                         <img src="${m.foto || 'https://via.placeholder.com/80'}" class="card-img-circle" onclick="ampliarFoto(this.src)">
-                        <div onclick="verCV('${m.id}')"><h3>${m.nombre} ${m.nacionalidad || ''}</h3></div>
+                        <div onclick="verCV('${m.id}')"><h3>${m.nombre} ${m.nacionalidad && m.nacionalidad !== "undefined" ? m.nacionalidad : ''}</h3></div>
                     </div>`;
                 });
             } else { renderCiudades(); }
         }
 
         function renderCiudades() {
-            nivel = "ciudades"; document.getElementById('btnBack').style.display = 'none';
+            nivel = "ciudades"; 
+            document.getElementById('btnBack').style.display = 'none';
             document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
-            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
+            const grid = document.getElementById('gridMain'); 
+            grid.innerHTML = "";
             
-            // Obtener ciudades únicas
             const ciudadesUnicas = [...new Set(miembros.map(m => m.ciudad))];
             
             ciudadesUnicas.forEach(c => {
-                // Buscar el primer miembro de esa ciudad para obtener su bandera
                 const primerMiembro = miembros.find(m => m.ciudad === c);
-                const bandera = primerMiembro ? primerMiembro.nacionalidad : "📍";
+                let iconoAMostrar = "📍";
+                if (primerMiembro && primerMiembro.nacionalidad && primerMiembro.nacionalidad !== "undefined") {
+                    iconoAMostrar = primerMiembro.nacionalidad;
+                }
                 
                 grid.innerHTML += `
                 <div class="card-folder" onclick="verCongs('${c}')">
-                    <span style="font-size:3rem;">${bandera}</span>
+                    <span style="font-size:3rem;">${iconoAMostrar}</span>
                     <h3 style="margin-top:10px;">${c}</h3>
                 </div>`;
             });
@@ -221,7 +224,7 @@
             miembros.filter(m => m.ciudad === c && m.cong === co).forEach(m => {
                 grid.innerHTML += `<div class="card-folder">
                     <img src="${m.foto || 'https://via.placeholder.com/80'}" class="card-img-circle" onclick="ampliarFoto(this.src)">
-                    <div onclick="verCV('${m.id}')"><h3>${m.nombre} ${m.nacionalidad || ''}</h3></div>
+                    <div onclick="verCV('${m.id}')"><h3>${m.nombre} ${m.nacionalidad && m.nacionalidad !== "undefined" ? m.nacionalidad : ''}</h3></div>
                 </div>`;
             });
         }
@@ -232,10 +235,11 @@
             const m = miembros.find(x => x.id === id);
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
+            const flag = m.nacionalidad && m.nacionalidad !== "undefined" ? m.nacionalidad : '';
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-header">
                     <img src="${m.foto || ''}" class="cv-photo-main" onclick="ampliarFoto(this.src)">
-                    <h1>${m.nombre} ${m.nacionalidad || ''}</h1>
+                    <h1>${m.nombre} ${flag}</h1>
                     <p>${m.ciudad} • ${m.cong}</p>
                 </div>
                 <div class="cv-grid">
@@ -268,7 +272,7 @@
             if(id) {
                 const m = miembros.find(x => x.id === id);
                 document.getElementById('inNom').value = m.nombre; document.getElementById('inDoc').value = m.doc || "";
-                document.getElementById('inNacIo').value = m.nacionalidad || "🇵🇾";
+                document.getElementById('inNacIo').value = (m.nacionalidad && m.nacionalidad !== "undefined") ? m.nacionalidad : "🇵🇾";
                 document.getElementById('inEdad').value = m.edad || ""; document.getElementById('inTel').value = m.tel || "";
                 document.getElementById('inCiu').value = m.ciudad; document.getElementById('inCong').value = m.cong;
                 document.getElementById('inEstCiv').value = m.estCiv || ""; document.getElementById('inOcuEsp').value = m.ocuEsp || "";
