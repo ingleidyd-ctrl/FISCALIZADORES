@@ -3,7 +3,7 @@
 <head> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA FISCALIZADORES - ELITE</title>
+    <title>SISTEMA FISCALIZADORES</title>
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
@@ -102,19 +102,19 @@
                 <div><label class="data-label">N° de Documento</label><input type="text" id="inDoc"></div>
                 <div><label class="data-label">Nacionalidad</label>
                     <select id="inNacIo">
-                        <option value="🇵🇾 Paraguay">🇵🇾 Paraguay</option>
-                        <option value="🇦🇷 Argentina">🇦🇷 Argentina</option>
-                        <option value="🇧🇷 Brasil">🇧🇷 Brasil</option>
-                        <option value="🇺🇾 Uruguay">🇺🇾 Uruguay</option>
-                        <option value="🇧🇴 Bolivia">🇧🇴 Bolivia</option>
-                        <option value="🇨🇱 Chile">🇨🇱 Chile</option>
-                        <option value="🇵🇪 Perú">🇵🇪 Perú</option>
-                        <option value="🇨🇴 Colombia">🇨🇴 Colombia</option>
-                        <option value="🇪🇨 Ecuador">🇪🇨 Ecuador</option>
-                        <option value="🇻🇪 Venezuela">🇻🇪 Venezuela</option>
-                        <option value="🇲🇽 México">🇲🇽 México</option>
-                        <option value="🇪🇸 España">🇪🇸 España</option>
-                        <option value="🇺🇸 EE.UU.">🇺🇸 EE.UU.</option>
+                        <option value="🇵🇾">🇵🇾 Paraguay</option>
+                        <option value="🇦🇷">🇦🇷 Argentina</option>
+                        <option value="🇧🇷">🇧🇷 Brasil</option>
+                        <option value="🇺🇾">🇺🇾 Uruguay</option>
+                        <option value="🇧🇴">🇧🇴 Bolivia</option>
+                        <option value="🇨🇱">🇨🇱 Chile</option>
+                        <option value="🇵🇪">🇵🇪 Perú</option>
+                        <option value="🇨🇴">🇨🇴 Colombia</option>
+                        <option value="🇪🇨">🇪🇨 Ecuador</option>
+                        <option value="🇻🇪">🇻🇪 Venezuela</option>
+                        <option value="🇲🇽">🇲🇽 México</option>
+                        <option value="🇪🇸">🇪🇸 España</option>
+                        <option value="🇺🇸">🇺🇸 EE.UU.</option>
                     </select>
                 </div>
                 <div><label class="data-label">Edad Actual</label><input type="text" id="inEdad"></div>
@@ -187,7 +187,7 @@
                 miembros.filter(m => (m.nombre && m.nombre.toLowerCase().includes(txt)) || (m.ciudad && m.ciudad.toLowerCase().includes(txt)) || (m.cong && m.cong.toLowerCase().includes(txt))).forEach(m => {
                     grid.innerHTML += `<div class="card-folder">
                         <img src="${m.foto || 'https://via.placeholder.com/80'}" class="card-img-circle" onclick="ampliarFoto(this.src)">
-                        <div onclick="verCV('${m.id}')"><h3>${m.nombre}</h3><small>${m.nacionalidad || ''}</small></div>
+                        <div onclick="verCV('${m.id}')"><h3>${m.nombre} ${m.nacionalidad || ''}</h3></div>
                     </div>`;
                 });
             } else { renderCiudades(); }
@@ -217,7 +217,7 @@
             miembros.filter(m => m.ciudad === c && m.cong === co).forEach(m => {
                 grid.innerHTML += `<div class="card-folder">
                     <img src="${m.foto || 'https://via.placeholder.com/80'}" class="card-img-circle" onclick="ampliarFoto(this.src)">
-                    <div onclick="verCV('${m.id}')"><h3>${m.nombre}</h3><p style="font-size:0.8rem">${m.nacionalidad || ''}</p></div>
+                    <div onclick="verCV('${m.id}')"><h3>${m.nombre} ${m.nacionalidad || ''}</h3></div>
                 </div>`;
             });
         }
@@ -231,16 +231,16 @@
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-header">
                     <img src="${m.foto || ''}" class="cv-photo-main" onclick="ampliarFoto(this.src)">
-                    <h1>${m.nombre}</h1>
-                    <p>${m.nacionalidad || ''} • ${m.ciudad}</p>
+                    <h1>${m.nombre} ${m.nacionalidad || ''}</h1>
+                    <p>${m.ciudad} • ${m.cong}</p>
                 </div>
                 <div class="cv-grid">
                     <div class="cv-side">
                         <div class="section-title">Datos Personales</div>
                         <span class="data-label">WhatsApp</span><span class="data-value">${m.tel || '---'}</span>
                         <span class="data-label">Documento</span><span class="data-value">${m.doc || '---'}</span>
-                        <span class="data-label">Nacionalidad</span><span class="data-value">${m.nacionalidad || '---'}</span>
                         <span class="data-label">Edad</span><span class="data-value">${m.edad || '---'}</span>
+                        <span class="data-label">Estado Civil</span><span class="data-value">${m.estCiv || '---'}</span>
                         <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="abrirEditor('${m.id}')">MODIFICAR</button>
                     </div>
                     <div class="cv-body">
@@ -264,7 +264,7 @@
             if(id) {
                 const m = miembros.find(x => x.id === id);
                 document.getElementById('inNom').value = m.nombre; document.getElementById('inDoc').value = m.doc || "";
-                document.getElementById('inNacIo').value = m.nacionalidad || "🇵🇾 Paraguay";
+                document.getElementById('inNacIo').value = m.nacionalidad || "🇵🇾";
                 document.getElementById('inEdad').value = m.edad || ""; document.getElementById('inTel').value = m.tel || "";
                 document.getElementById('inCiu').value = m.ciudad; document.getElementById('inCong').value = m.cong;
                 document.getElementById('inEstCiv').value = m.estCiv || ""; document.getElementById('inOcuEsp').value = m.ocuEsp || "";
@@ -274,7 +274,7 @@
                 document.getElementById('prevFoto').src = m.foto || "https://via.placeholder.com/120";
             } else {
                 document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
-                document.getElementById('inNacIo').value = "🇵🇾 Paraguay";
+                document.getElementById('inNacIo').value = "🇵🇾";
                 document.getElementById('prevFoto').src = "https://via.placeholder.com/120"; fotoURL = "";
             }
         }
@@ -304,7 +304,7 @@
             irDashboard();
         }
 
-        irDashboard();
+            irDashboard();
     </script>
 </body>
 </html>
