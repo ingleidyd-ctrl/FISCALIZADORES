@@ -223,7 +223,7 @@
     </div>
 
     <script>
-        // Configuración Firebase (Reemplaza con tus claves si es necesario)
+        // Configuración Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyBkP6NALOTSHGd4QVgAxHyeJzCCnOUDY6M",
           authDomain: "fiscalizadores-elite.firebaseapp.com",
@@ -246,8 +246,8 @@
         function login() {
             const u = document.getElementById('userInput').value;
             const p = document.getElementById('passInput').value;
-            // Contraseña ajustada a lo solicitado
-            if(u === "admin" && p === "fiscalizadores2026") { 
+            // Contraseña personalizada solicitada
+            if(u === "admin" && p === "crist2026") { 
                 document.getElementById('vistaLogin').style.display = 'none';
                 irDashboard();
             } else { document.getElementById('errorLogin').style.display = 'block'; }
