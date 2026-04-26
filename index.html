@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head> 
-    <link rel="manifest" href="manifest.json?v=105">
+    <link rel="manifest" href="manifest.json?v=106">
     <link rel="apple-touch-icon" href="logo.png">
     <link rel="icon" type="image/png" href="logo.png">
     
@@ -124,7 +124,7 @@
         .editor-box { max-width: 850px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .preview-area { grid-column: span 2; display: flex; align-items: center; gap: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; }
-        input, textarea { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; outline: none; }
+        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; outline: none; }
     </style>
 </head>
 <body>
@@ -177,6 +177,20 @@
                     <input type="file" onchange="procesarFoto(this)">
                 </div>
                 <div style="grid-column: span 2;"><label>Nombre Completo</label><input type="text" id="inNom"></div>
+                
+                <div>
+                    <label>País</label>
+                    <select id="inPais">
+                        <option value="Paraguay">🇵🇾 Paraguay</option>
+                        <option value="Argentina">🇦🇷 Argentina</option>
+                        <option value="Brasil">🇧🇷 Brasil</option>
+                        <option value="Bolivia">🇧🇴 Bolivia</option>
+                        <option value="España">🇪🇸 España</option>
+                        <option value="EEUU">🇺🇸 EEUU</option>
+                        <option value="Otro">🌍 Otro</option>
+                    </select>
+                </div>
+                
                 <div><label>Ciudad</label><input type="text" id="inCiu"></div>
                 <div><label>Filial (Congregación)</label><input type="text" id="inCong"></div>
                 <div style="grid-column: span 2;"><label>Función del Fiscalizador</label><input type="text" id="inFisc"></div>
@@ -188,7 +202,7 @@
                 <div><label>Ocupación Espiritual</label><input type="text" id="inEsp"></div>
                 <div><label>Ocupación Material</label><input type="text" id="inMat"></div>
                 <div style="grid-column: span 2;"><label>Estado Actual</label><input type="text" id="inEst"></div>
-                <button id="btnGuardar" class="btn-new" style="grid-column: span 2;" onclick="guardar()">GUARDAR CAMBIOS EN LA NUBE</button>
+                <button id="btnGuardar" class="btn-new" style="grid-column: span 2;" onclick="guardar()">GUARDAR REGISTRO</button>
             </div>
         </div>
     </div>
@@ -211,6 +225,16 @@
         let nivelActual = "ciudades";
         let ciudadSeleccionada = "";
         let idEdicion = null;
+
+        const banderas = {
+            "Paraguay": "🇵🇾",
+            "Argentina": "🇦🇷",
+            "Brasil": "🇧🇷",
+            "Bolivia": "🇧🇴",
+            "España": "🇪🇸",
+            "EEUU": "🇺🇸",
+            "Otro": "🌍"
+        };
 
         function login() {
             const u = document.getElementById('userInput').value;
@@ -245,194 +269,3 @@
         function renderCiudades() {
             nivelActual = "ciudades";
             document.getElementById('txtTitulo').innerText = "CIUDADES:";
-            document.getElementById('btnVolver').style.display = 'none';
-            const cont = document.getElementById('mainGrid');
-            cont.className = "grid-folder";
-            cont.innerHTML = "";
-            const ciudades = [...new Set(dataLocal.map(f => f.ciudad))];
-            ciudades.forEach(ciu => {
-                if(!ciu) return;
-                const cant = dataLocal.filter(f => f.ciudad === ciu).length;
-                cont.innerHTML += `
-                    <div class="folder-card" onclick="verCongregaciones('${ciu}')">
-                        <span class="folder-icon">📍</span>
-                        <h3>${ciu}</h3>
-                        <span class="folder-badge">${cant} Fiscalizadores</span>
-                    </div>`;
-            });
-        }
-
-        function verCongregaciones(ciu) {
-            nivelActual = "congregaciones";
-            ciudadSeleccionada = ciu;
-            document.getElementById('txtTitulo').innerText = "Ciudad: " + ciu;
-            document.getElementById('btnVolver').style.display = 'block';
-            const cont = document.getElementById('mainGrid');
-            cont.className = "grid-folder";
-            cont.innerHTML = "";
-            const congs = [...new Set(dataLocal.filter(f => f.ciudad === ciu).map(f => f.cong))];
-            congs.forEach(con => {
-                const cant = dataLocal.filter(f => f.ciudad === ciu && f.cong === con).length;
-                cont.innerHTML += `
-                    <div class="folder-card" onclick="verFiscalizadores('${ciu}', '${con}')">
-                        <span class="folder-icon">⛪</span>
-                        <h3>${con}</h3>
-                        <span class="folder-badge">${cant} Miembros</span>
-                    </div>`;
-            });
-        }
-
-        function verFiscalizadores(ciu, con) {
-            nivelActual = "fiscalizadores";
-            document.getElementById('txtTitulo').innerText = "Congregación: " + con;
-            const cont = document.getElementById('mainGrid');
-            cont.className = "cards-grid";
-            cont.innerHTML = "";
-            const filtrados = dataLocal.filter(f => f.ciudad === ciu && f.cong === con);
-            filtrados.forEach(f => {
-                cont.innerHTML += `
-                    <div class="card">
-                        <div class="card-header">
-                            <img src="${f.foto || 'https://via.placeholder.com/60'}" class="card-img">
-                            <div><h3>${f.nombre}</h3><p style="font-size:0.8rem; color:var(--azul-claro);">${f.fisc}</p></div>
-                        </div>
-                        <button class="btn-view" onclick="verCV('${f.id_cloud}')">VER PERFIL</button>
-                    </div>`;
-            });
-        }
-
-        function volverAtras() {
-            if (nivelActual === "fiscalizadores") verCongregaciones(ciudadSeleccionada);
-            else if (nivelActual === "congregaciones") renderCiudades();
-        }
-
-        function buscador() {
-            const q = document.getElementById('inputBusqueda').value.toLowerCase();
-            if(!q) { renderCiudades(); return; }
-            document.getElementById('txtTitulo').innerText = "Búsqueda:";
-            document.getElementById('btnVolver').style.display = 'block';
-            const cont = document.getElementById('mainGrid');
-            cont.className = "cards-grid";
-            cont.innerHTML = "";
-            const filtrados = dataLocal.filter(f => 
-                f.nombre.toLowerCase().includes(q) || 
-                f.ciudad.toLowerCase().includes(q) || 
-                f.cong.toLowerCase().includes(q)
-            );
-            filtrados.forEach(f => {
-                cont.innerHTML += `
-                    <div class="card">
-                        <div class="card-header">
-                            <img src="${f.foto || 'https://via.placeholder.com/60'}" class="card-img">
-                            <div><h3>${f.nombre}</h3><p style="font-size:0.8rem; color:var(--azul-claro);">${f.ciudad} | ${f.cong}</p></div>
-                        </div>
-                        <button class="btn-view" onclick="verCV('${f.id_cloud}')">VER PERFIL</button>
-                    </div>`;
-            });
-        }
-
-        function abrirEditor(id = null) {
-            idEdicion = id;
-            document.getElementById('vistaDashboard').style.display = 'none';
-            document.getElementById('vistaCV').style.display = 'none';
-            document.getElementById('vistaEditor').style.display = 'block';
-            
-            if(id) {
-                document.getElementById('editorTitulo').innerText = "Editar Registro";
-                const f = dataLocal.find(x => x.id_cloud === id);
-                document.getElementById('inNom').value = f.nombre;
-                document.getElementById('inCiu').value = f.ciudad;
-                document.getElementById('inCong').value = f.cong;
-                document.getElementById('inFisc').value = f.fisc;
-                document.getElementById('inTel').value = f.tel;
-                document.getElementById('inEdad').value = f.edad;
-                document.getElementById('inCiv').value = f.civ;
-                document.getElementById('inAnos').value = f.anos;
-                document.getElementById('inHist').value = f.hist;
-                document.getElementById('inEsp').value = f.esp;
-                document.getElementById('inMat').value = f.mat;
-                document.getElementById('inEst').value = f.est;
-                tmpFoto = f.foto || "";
-                document.getElementById('prevImg').src = f.foto || "https://via.placeholder.com/90";
-            } else {
-                document.getElementById('editorTitulo').innerText = "Nuevo Registro";
-                document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
-                tmpFoto = "";
-                document.getElementById('prevImg').src = "https://via.placeholder.com/90";
-            }
-        }
-
-        function procesarFoto(input) {
-            if (input.files && input.files[0]) {
-                let reader = new FileReader();
-                reader.onload = e => { tmpFoto = e.target.result; document.getElementById('prevImg').src = tmpFoto; };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        async function guardar() {
-            const btn = document.getElementById('btnGuardar');
-            btn.innerText = "PROCESANDO...";
-            btn.disabled = true;
-            const registro = {
-                nombre: document.getElementById('inNom').value,
-                ciudad: document.getElementById('inCiu').value,
-                cong: document.getElementById('inCong').value,
-                fisc: document.getElementById('inFisc').value,
-                tel: document.getElementById('inTel').value,
-                edad: document.getElementById('inEdad').value,
-                civ: document.getElementById('inCiv').value,
-                anos: document.getElementById('inAnos').value,
-                hist: document.getElementById('inHist').value,
-                esp: document.getElementById('inEsp').value,
-                mat: document.getElementById('inMat').value,
-                est: document.getElementById('inEst').value,
-                foto: tmpFoto,
-                fecha: new Date().getTime()
-            };
-            try {
-                if(idEdicion) {
-                    await dbCloud.collection("curriculums").doc(idEdicion).update(registro);
-                } else {
-                    await dbCloud.collection("curriculums").add(registro);
-                }
-                btn.disabled = false;
-                irDashboard();
-            } catch (e) {
-                alert("Error: " + e);
-                btn.disabled = false;
-            }
-        }
-
-        function verCV(idCloud) {
-            const f = dataLocal.find(x => x.id_cloud === idCloud);
-            document.getElementById('vistaDashboard').style.display = 'none';
-            document.getElementById('vistaCV').style.display = 'block';
-            document.getElementById('cvDetalle').innerHTML = `
-                <button class="btn-edit-cv" onclick="abrirEditor('${f.id_cloud}')">✏️ EDITAR</button>
-                <div class="cv-aside">
-                    <img src="${f.foto || 'https://via.placeholder.com/150'}" class="cv-photo">
-                    <h3 class="cv-title">CONTACTO</h3>
-                    <p>📱 ${f.tel}</p>
-                    <p>📍 ${f.ciudad}</p>
-                    <p>⛪ ${f.cong}</p>
-                    <h3 class="cv-title">DATOS</h3>
-                    <p>🎂 Edad: ${f.edad} años</p>
-                    <p>💍 Estado: ${f.civ}</p>
-                </div>
-                <div class="cv-main">
-                    <h1>${f.nombre}</h1>
-                    <p style="color:var(--azul-claro); font-weight:bold; text-transform:uppercase;">${f.fisc}</p>
-                    <h3 style="margin-top:30px;">Historial de Vida</h3>
-                    <p style="margin-top:10px; line-height:1.6; color:#555; white-space: pre-line;">${f.hist}</p>
-                    <div style="margin-top:30px;">
-                        <div class="cv-bullet"><strong>Ocupación Espiritual:</strong> ${f.esp}</div>
-                        <div class="cv-bullet"><strong>Ocupación Material:</strong> ${f.mat}</div>
-                        <div class="cv-bullet"><strong>Años Perseverancia:</strong> ${f.anos}</div>
-                        <div class="cv-bullet"><strong>Estado Actual:</strong> ${f.est}</div>
-                    </div>
-                </div>`;
-        }
-    </script>
-</body>
-</html>
