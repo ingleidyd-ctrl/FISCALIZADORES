@@ -127,8 +127,8 @@
                 </div>
                 <div style="grid-column: span 2;"><label>Nombre Completo</label><input type="text" id="inNom"></div>
                 <div><label>N° de Documento</label><input type="text" id="inDoc"></div>
-                <div><label>Fecha de Nacimiento</label><input type="date" id="inNac" onchange="calcularEdadAutomatica(this.value)"></div>
-                <div><label>Edad (Auto)</label><input type="text" id="inEdad" readonly style="background: #1c2128; color: var(--azul-claro); font-weight: bold;"></div>
+                <div><label>Fecha de Nacimiento</label><input type="date" id="inNac" onchange="calcularEdad(this.value)"></div>
+                <div><label>Edad (Cálculo Automático)</label><input type="text" id="inEdad" readonly style="background: #050a14; border-color: #3b82f6;"></div>
                 <div><label>WhatsApp</label><input type="text" id="inTel"></div>
                 <div><label>Ciudad</label><input type="text" id="inCiu"></div>
                 <div><label>Filial (Congregación)</label><input type="text" id="inCong"></div>
@@ -189,13 +189,16 @@
             });
         }
 
-        function calcularEdadAutomatica(fecha) {
-            if(!fecha) return;
+        // FUNCIÓN NUEVA: CALCULAR EDAD
+        function calcularEdad(fechaNac) {
+            if (!fechaNac) return;
             const hoy = new Date();
-            const cumple = new Date(fecha);
-            let edad = hoy.getFullYear() - cumple.getFullYear();
-            const m = hoy.getMonth() - cumple.getMonth();
-            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) edad--;
+            const cumpleanos = new Date(fechaNac);
+            let edad = hoy.getFullYear() - cumpleanos.getFullYear();
+            const m = hoy.getMonth() - cumpleanos.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < cumpleanos.getDate())) {
+                edad--;
+            }
             document.getElementById('inEdad').value = edad + " años";
         }
 
@@ -290,7 +293,7 @@
                 <div class="cv-body-content">
                     <div class="cv-aside">
                         <div class="cv-section-title">INFORMACIÓN DE CONTACTO</div>
-                        <p>📱 WhatsApp: ${f.tel || 'No registrado'}</p>
+                        <p>📱 WhatsApp: ${f.tel || 'S/N'}</p>
                         <p>🆔 Documento: ${f.doc || '---'}</p>
                         <p>📍 Ciudad: ${f.ciudad}</p>
                         <p>⛪ Congregación: ${f.cong}</p>
@@ -305,7 +308,7 @@
 
                     <div class="cv-main">
                         <div class="cv-hist-title">Historial de Vida</div>
-                        <p style="color:#8b949e; font-size:1rem; margin-bottom: 40px; white-space: pre-line;">${f.hist || 'Sin información de historial.'}</p>
+                        <p style="color:#8b949e; font-size:1rem; margin-bottom: 40px; white-space: pre-line;">${f.hist || 'Sin información.'}</p>
 
                         <div class="cv-section-title">DETALLES ESPECÍFICOS</div>
                         
