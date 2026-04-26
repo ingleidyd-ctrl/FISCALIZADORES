@@ -1,15 +1,16 @@
 {
-  "short_name": "CCPD",
-  "name": "CCPD Fiscalizadores",
+  "short_name": "Fiscalizadores",
+  "name": "Fiscalizadores",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/1170/1170577.png",
+      "src": "https://cdn-icons-png.flaticon.com/512/739/739247.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
   "start_url": "./index.html",
   "display": "standalone",
-  "theme_color": "#000000",
+  "theme_color": "#0a1f33",
   "background_color": "#ffffff"
 }
