@@ -1,19 +1,9 @@
 <!DOCTYPE html>
 <html lang="es">
 <head> 
-    <link rel="manifest" href="manifest.json?v=106">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="icon" type="image/png" href="logo.png">
-    
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-      }
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SISTEMA FISCALIZADORES</title>
+    <title>SISTEMA FISCALIZADORES - LEIDYD</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
@@ -26,121 +16,72 @@
             --bg-gris: #f4f7fa;
             --texto: #334155;
             --flecha: #4a6fa5;
+            --whatsapp: #25d366;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-gris); color: var(--texto); }
 
-        /* VISTA LOGIN */
-        #vistaLogin { 
-            height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--azul-header); 
-        }
+        /* LOGIN */
+        #vistaLogin { height: 100vh; display: flex; align-items: center; justify-content: center; background: var(--azul-header); }
         .login-box { background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
 
         /* HEADER */
-        header { 
-            background: var(--azul-header); 
-            color: white; 
-            padding: 15px 40px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
+        header { background: var(--azul-header); color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         header h1 { font-size: 1.4rem; letter-spacing: 2px; font-weight: 800; color: var(--azul-claro); }
-        .header-subtext { font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; }
+
+        /* DASHBOARD STATS */
+        .stats-bar { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; padding: 20px 40px; background: white; border-bottom: 1px solid #e2e8f0; }
+        .stat-item { padding: 15px; border-radius: 10px; background: #f8fafc; text-align: center; border: 1px solid #eee; }
+        .stat-item span { display: block; font-size: 1.2rem; font-weight: 800; color: var(--azul-header); }
+        .stat-item label { font-size: 0.7rem; color: #64748b; font-weight: bold; }
 
         /* BUSCADOR */
-        .search-section {
-            background: white;
-            padding: 20px 40px;
-            border-bottom: 1px solid #e2e8f0;
-            display: flex;
-            gap: 20px;
-            align-items: center;
-        }
-        .search-input { 
-            flex-grow: 1;
-            padding: 12px 20px; 
-            border-radius: 10px; 
-            border: 1px solid #cbd5e1; 
-            outline: none;
-        }
-        .btn-new {
-            background: var(--azul-claro);
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
+        .search-section { background: white; padding: 20px 40px; border-bottom: 1px solid #e2e8f0; display: flex; gap: 20px; }
+        .search-input { flex-grow: 1; padding: 12px 20px; border-radius: 10px; border: 1px solid #cbd5e1; outline: none; }
+        .btn-new { background: var(--azul-claro); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* GRIDS Y TARJETAS */
+        /* GRIDS */
         .container { padding: 30px 40px; }
         .grid-folder { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
-        .folder-card {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            text-align: center;
-            cursor: pointer;
-            border: 2px solid transparent;
-            transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        }
+        .folder-card { background: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .folder-card:hover { border-color: var(--azul-claro); transform: translateY(-5px); }
-        .folder-icon { font-size: 3.5rem; margin-bottom: 15px; display: flex; align-items: center; justify-content: center; min-height: 70px; }
+        .folder-icon { font-size: 3.5rem; margin-bottom: 15px; display: block; }
         .folder-badge { background: #f0f9ff; color: var(--azul-claro); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-top: 10px; display: inline-block; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 15px; padding: 20px; border: 1px solid #e2e8f0; position: relative; }
+        .card { background: white; border-radius: 15px; padding: 20px; border: 1px solid #e2e8f0; }
         .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .card-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--azul-claro); }
-        .btn-view { width: 100%; padding: 10px; background: #f0f9ff; border: none; border-radius: 8px; color: var(--azul-claro); font-weight: 700; cursor: pointer; }
 
-        /* VISTA CV */
+        /* VISTA CV - EL DISEÑO QUE AMAMOS */
         #vistaCV { padding: 20px; }
         .cv-sheet { max-width: 900px; margin: 0 auto; background: white; display: flex; flex-wrap: wrap; border-radius: 8px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.1); position: relative; }
         .cv-aside { width: 35%; background: var(--azul-header); color: white; padding: 40px 30px; min-width: 280px; }
         .cv-main { width: 65%; padding: 50px; min-width: 320px; }
-        .cv-photo { width: 150px; height: 150px; border-radius: 50%; border: 4px solid var(--azul-claro); object-fit: cover; margin-bottom: 25px; cursor: zoom-in; transition: 0.3s; }
-        .cv-photo:hover { opacity: 0.8; }
-        .cv-title { color: var(--azul-claro); text-transform: uppercase; font-size: 0.8rem; margin: 25px 0 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
-        .cv-bullet { position: relative; padding-left: 30px; margin-bottom: 15px; }
+        .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid var(--azul-claro); object-fit: cover; margin-bottom: 25px; cursor: zoom-in; }
+        .cv-title { color: var(--azul-claro); text-transform: uppercase; font-size: 0.85rem; margin: 25px 0 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; letter-spacing: 1px; }
+        .cv-bullet { position: relative; padding-left: 30px; margin-bottom: 15px; line-height: 1.4; }
         .cv-bullet::before { content: ''; position: absolute; left: 0; top: 4px; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 12px solid var(--flecha); }
 
-        /* MODAL FOTO AGRANDADA */
-        #modalFoto {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            top: 0; left: 0;
-            width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            align-items: center;
-            justify-content: center;
-            cursor: zoom-out;
-        }
-        #fotoAgrandada {
-            max-width: 90%;
-            max-height: 85%;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(255,255,255,0.2);
-            border: 3px solid white;
-        }
+        /* MODAL FOTO */
+        #modalFoto { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; cursor: zoom-out; }
+        #fotoAgrandada { max-width: 90%; max-height: 85%; border-radius: 10px; border: 3px solid white; }
 
         /* EDITOR */
-        #vistaEditor { padding: 40px; }
         .editor-box { max-width: 850px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .preview-area { grid-column: span 2; display: flex; align-items: center; gap: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; }
-        input, textarea, select { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; outline: none; }
+        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; outline: none; }
 
         #vistaDashboard, #vistaCV, #vistaEditor { display: none; }
+
+        @media print {
+            body * { visibility: hidden; }
+            #cvDetalle, #cvDetalle * { visibility: visible; }
+            #cvDetalle { position: absolute; left: 0; top: 0; width: 100%; box-shadow: none; }
+        }
     </style>
 </head>
 <body>
@@ -154,71 +95,67 @@
             <h2 style="margin-bottom: 20px; color: var(--azul-header);">FISCALIZADORES 🕊️</h2>
             <input type="text" id="userInput" placeholder="Usuario">
             <input type="password" id="passInput" placeholder="Contraseña">
-            <button class="btn-new" style="width:100%" onclick="login()">ENTRAR AL SISTEMA</button>
-            <p id="errorLogin" style="color:red; font-size:0.8rem; margin-top:10px; display:none;">Datos incorrectos</p>
+            <button class="btn-new" style="width:100%" onclick="login()">ENTRAR</button>
         </div>
     </div>
 
     <div id="vistaDashboard">
         <header>
-            <h1>FISCALIZADORES</h1>
-            <div style="text-align: right;">
-                <div class="header-subtext">CONGREGACIÓN CRISTIANA PUEBLO DE DIOS 🕊️</div>
-                <button onclick="logout()" style="background:none; border:1px solid white; color:white; padding:2px 8px; border-radius:5px; font-size:0.7rem; cursor:pointer; margin-top:5px;">Cerrar Sesión</button>
-            </div>
+            <h1>SISTEMA ELITE</h1>
+            <button onclick="logout()" style="background:none; border:1px solid white; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">Salir</button>
         </header>
+
+        <div class="stats-bar">
+            <div class="stat-item"><span id="stTot">0</span><label>Total Fiscalizadores</label></div>
+            <div class="stat-item"><span id="stCiu">0</span><label>Ciudades</label></div>
+            <div class="stat-item"><span id="stFil">0</span><label>Filiales</label></div>
+        </div>
 
         <div class="search-section">
             <input type="text" id="inputBusqueda" class="search-input" placeholder="🔍 Buscar ciudad o filial..." onkeyup="buscador()">
-            <button class="btn-new" onclick="abrirEditor()">+ REGISTRAR NUEVO</button>
+            <button class="btn-new" onclick="abrirEditor()">+ REGISTRAR</button>
         </div>
 
         <div class="container">
             <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
                 <h2 id="txtTitulo">CIUDADES:</h2>
-                <button id="btnVolver" onclick="volverAtras()" style="display:none; background:none; border:none; color:var(--azul-claro); cursor:pointer; font-weight:bold;">← Volver</button>
+                <button id="btnVolver" onclick="volverAtras()" style="display:none; color:var(--azul-claro); background:none; border:none; cursor:pointer; font-weight:bold;">← Volver</button>
             </div>
             <div id="mainGrid" class="grid-folder"></div>
         </div>
     </div>
 
     <div id="vistaCV">
-        <button onclick="irDashboard()" style="margin:20px; cursor:pointer; background:none; border:none; color:var(--azul-claro); font-weight:bold;">← VOLVER</button>
+        <div style="max-width:900px; margin: 0 auto; padding: 10px; display: flex; justify-content: space-between;">
+            <button onclick="irDashboard()" style="cursor:pointer; background:none; border:none; color:var(--azul-claro); font-weight:bold;">← VOLVER</button>
+            <button onclick="window.print()" style="padding:8px 15px; cursor:pointer; border-radius:5px; border:1px solid #ddd;">🖨️ Imprimir PDF</button>
+        </div>
         <div id="cvDetalle" class="cv-sheet"></div>
     </div>
 
     <div id="vistaEditor">
         <div class="editor-box">
-            <button onclick="irDashboard()" style="margin-bottom:20px; cursor:pointer; background:none; border:none; color:var(--azul-claro);">← Cancelar</button>
-            <h2 id="editorTitulo">Nuevo Registro</h2>
+            <h2 id="editorTitulo">Registro de Fiscalizador</h2>
             <div class="form-grid" style="margin-top:20px;">
                 <div class="preview-area">
                     <img id="prevImg" src="https://via.placeholder.com/90" style="width:90px; height:90px; border-radius:50%; object-fit:cover;">
                     <input type="file" onchange="procesarFoto(this)">
                 </div>
                 <div style="grid-column: span 2;"><label>Nombre Completo</label><input type="text" id="inNom"></div>
-                <div>
-                    <label>País</label>
-                    <select id="inPais">
-                        <option value="Paraguay">🇵🇾 Paraguay</option>
-                        <option value="Argentina">🇦🇷 Argentina</option>
-                        <option value="Brasil">🇧🇷 Brasil</option>
-                        <option value="España">🇪🇸 España</option>
-                        <option value="Otro">🌍 Otro</option>
-                    </select>
-                </div>
+                <div><label>País</label><select id="inPais"><option value="Paraguay">🇵🇾 Paraguay</option><option value="Argentina">🇦🇷 Argentina</option><option value="Brasil">🇧🇷 Brasil</option></select></div>
                 <div><label>Ciudad</label><input type="text" id="inCiu"></div>
-                <div><label>Filial (Congregación)</label><input type="text" id="inCong"></div>
-                <div style="grid-column: span 2;"><label>Función</label><input type="text" id="inFisc"></div>
+                <div><label>Filial</label><input type="text" id="inCong"></div>
                 <div><label>WhatsApp</label><input type="text" id="inTel"></div>
                 <div><label>Edad</label><input type="number" id="inEdad"></div>
-                <button id="btnGuardar" class="btn-new" style="grid-column: span 2;" onclick="guardar()">GUARDAR REGISTRO</button>
+                <div style="grid-column: span 2;"><label>Función</label><input type="text" id="inFisc"></div>
+                <div style="grid-column: span 2;"><label>Historial / Notas</label><textarea id="inHist" rows="4"></textarea></div>
+                <button id="btnGuardar" class="btn-new" style="grid-column: span 2;" onclick="guardar()">GUARDAR</button>
+                <button onclick="irDashboard()" style="grid-column: span 2; background:none; border:none; color:gray; cursor:pointer;">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuración Firebase
         const firebaseConfig = {
           apiKey: "AIzaSyBkP6NALOTSHGd4QVgAxHyeJzCCnOUDY6M",
           authDomain: "fiscalizadores-elite.firebaseapp.com",
@@ -228,7 +165,7 @@
           appId: "1:482161512140:web:95dd229a858ab627a03c69"
         };
         firebase.initializeApp(firebaseConfig);
-        const dbCloud = firebase.firestore();
+        const db = firebase.firestore();
 
         let dataLocal = [];
         let tmpFoto = "";
@@ -236,15 +173,13 @@
         let ciudadSeleccionada = "";
         let idEdicion = null;
 
-        const banderas = { "Paraguay": "🇵🇾", "Argentina": "🇦🇷", "Brasil": "🇧🇷", "España": "🇪🇸", "Otro": "🌍" };
+        const banderas = { "Paraguay": "🇵🇾", "Argentina": "🇦🇷", "Brasil": "🇧🇷", "Otro": "🌍" };
 
         function login() {
-            const u = document.getElementById('userInput').value;
-            const p = document.getElementById('passInput').value;
-            if(u === "admin" && p === "elite2026") {
+            if(document.getElementById('userInput').value === "admin" && document.getElementById('passInput').value === "elite2026") {
                 document.getElementById('vistaLogin').style.display = 'none';
                 irDashboard();
-            } else { document.getElementById('errorLogin').style.display = 'block'; }
+            }
         }
 
         function logout() { location.reload(); }
@@ -257,23 +192,25 @@
         }
 
         function escucharDatos() {
-            dbCloud.collection("curriculums").orderBy("fecha", "desc").onSnapshot((qs) => {
+            db.collection("curriculums").orderBy("fecha", "desc").onSnapshot((qs) => {
                 dataLocal = [];
                 qs.forEach((doc) => { dataLocal.push({ id_cloud: doc.id, ...doc.data() }); });
+                document.getElementById('stTot').innerText = dataLocal.length;
+                document.getElementById('stCiu').innerText = [...new Set(dataLocal.map(f => f.ciudad))].length;
+                document.getElementById('stFil').innerText = [...new Set(dataLocal.map(f => f.cong))].length;
                 renderCiudades();
             });
         }
 
         function renderCiudades() {
             nivelActual = "ciudades";
-            document.getElementById('txtTitulo').innerText = "CIUDADES:";
             document.getElementById('btnVolver').style.display = 'none';
+            document.getElementById('txtTitulo').innerText = "CIUDADES:";
             const cont = document.getElementById('mainGrid');
             cont.className = "grid-folder";
             cont.innerHTML = "";
             const ciudades = [...new Set(dataLocal.map(f => f.ciudad))];
             ciudades.forEach(ciu => {
-                if(!ciu) return;
                 const cant = dataLocal.filter(f => f.ciudad === ciu).length;
                 cont.innerHTML += `<div class="folder-card" onclick="verCongregaciones('${ciu}')"><span class="folder-icon">📍</span><h3>${ciu}</h3><span class="folder-badge">${cant} Fiscalizadores</span></div>`;
             });
@@ -282,14 +219,13 @@
         function verCongregaciones(ciu) {
             nivelActual = "congregaciones";
             ciudadSeleccionada = ciu;
-            document.getElementById('txtTitulo').innerText = "Ciudad: " + ciu;
             document.getElementById('btnVolver').style.display = 'block';
+            document.getElementById('txtTitulo').innerText = "Ciudad: " + ciu;
             const cont = document.getElementById('mainGrid');
-            cont.className = "grid-folder";
             cont.innerHTML = "";
             const congs = [...new Set(dataLocal.filter(f => f.ciudad === ciu).map(f => f.cong))];
             congs.forEach(con => {
-                const regs = dataLocal.filter(f => f.ciudad === ciu && f.cong === con);
+                const regs = dataLocal.filter(f => f.cong === con);
                 const bandera = banderas[regs[0].pais] || "🌍";
                 cont.innerHTML += `<div class="folder-card" onclick="verFiscalizadores('${ciu}', '${con}')"><span class="folder-icon">${bandera}</span><h3>${con}</h3><span class="folder-badge">${regs.length} Miembros</span></div>`;
             });
@@ -297,68 +233,58 @@
 
         function verFiscalizadores(ciu, con) {
             nivelActual = "fiscalizadores";
-            document.getElementById('txtTitulo').innerText = "Congregación: " + con;
+            document.getElementById('txtTitulo').innerText = "Filial: " + con;
             const cont = document.getElementById('mainGrid');
             cont.className = "cards-grid";
             cont.innerHTML = "";
             dataLocal.filter(f => f.ciudad === ciu && f.cong === con).forEach(f => {
-                cont.innerHTML += `<div class="card"><div class="card-header"><img src="${f.foto || 'https://via.placeholder.com/60'}" class="card-img"><div><h3>${f.nombre}</h3><p style="color:var(--azul-claro);">${f.fisc}</p></div></div><button class="btn-view" onclick="verCV('${f.id_cloud}')">VER PERFIL</button></div>`;
+                cont.innerHTML += `<div class="card"><div class="card-header"><img src="${f.foto || 'https://via.placeholder.com/60'}" class="card-img"><div><h3>${f.nombre}</h3><p style="color:var(--azul-claro); font-size:0.8rem;">${f.fisc}</p></div></div><button class="btn-new" style="width:100%" onclick="verCV('${f.id_cloud}')">ABRIR PERFIL</button></div>`;
             });
         }
 
-        function volverAtras() {
-            if (nivelActual === "fiscalizadores") verCongregaciones(ciudadSeleccionada);
-            else renderCiudades();
-        }
-
-        // --- NUEVO BUSCADOR POR FILIALES ---
         function buscador() {
             const q = document.getElementById('inputBusqueda').value.toLowerCase();
             if(!q) { renderCiudades(); return; }
-            document.getElementById('txtTitulo').innerText = "Filiales encontradas:";
             document.getElementById('btnVolver').style.display = 'block';
             const cont = document.getElementById('mainGrid');
             cont.className = "grid-folder";
             cont.innerHTML = "";
-            
             const filtrados = dataLocal.filter(f => f.ciudad.toLowerCase().includes(q) || f.cong.toLowerCase().includes(q));
-            const filialesUnicas = [...new Set(filtrados.map(f => f.cong))];
-
-            filialesUnicas.forEach(con => {
+            const congsUnicas = [...new Set(filtrados.map(f => f.cong))];
+            congsUnicas.forEach(con => {
                 const regs = dataLocal.filter(f => f.cong === con);
-                const ciudadP = regs[0].ciudad;
-                const bandera = banderas[regs[0].pais] || "🌍";
-                cont.innerHTML += `<div class="folder-card" onclick="verFiscalizadores('${ciudadP}', '${con}')"><span class="folder-icon">${bandera}</span><h3>${con}</h3><p style="font-size:0.7rem; color:gray;">${ciudadP}</p><span class="folder-badge">${regs.length} Miembros</span></div>`;
+                cont.innerHTML += `<div class="folder-card" onclick="verFiscalizadores('${regs[0].ciudad}', '${con}')"><span class="folder-icon">📂</span><h3>${con}</h3><p style="font-size:0.7rem; color:gray;">${regs[0].ciudad}</p></div>`;
             });
-        }
-
-        function agrandarFoto(url) {
-            const modal = document.getElementById('modalFoto');
-            document.getElementById('fotoAgrandada').src = url;
-            modal.style.display = "flex";
         }
 
         function verCV(idCloud) {
             const f = dataLocal.find(x => x.id_cloud === idCloud);
-            const fotoUrl = f.foto || 'https://via.placeholder.com/150';
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
+            const fotoUrl = f.foto || 'https://via.placeholder.com/150';
+            
             document.getElementById('cvDetalle').innerHTML = `
-                <button class="btn-edit-cv" onclick="abrirEditor('${f.id_cloud}')">✏️ EDITAR</button>
                 <div class="cv-aside">
-                    <img src="${fotoUrl}" class="cv-photo" onclick="agrandarFoto('${fotoUrl}')" title="Clic para agrandar">
+                    <img src="${fotoUrl}" class="cv-photo" onclick="agrandarFoto('${fotoUrl}')">
                     <h3 class="cv-title">CONTACTO</h3>
-                    <p>📱 ${f.tel}</p>
-                    <p>📍 ${f.ciudad}</p>
-                    <p>⛪ ${f.cong}</p>
+                    <div class="cv-bullet">📱 ${f.tel}</div>
+                    <div class="cv-bullet">📍 ${f.ciudad}, ${f.pais}</div>
+                    <div class="cv-bullet">⛪ ${f.cong}</div>
+                    <h3 class="cv-title">DATOS PERSONALES</h3>
+                    <div class="cv-bullet">🎂 Edad: ${f.edad} años</div>
+                    <button onclick="abrirEditor('${f.id_cloud}')" style="margin-top:40px; background:rgba(255,255,255,0.1); color:white; border:none; padding:10px; border-radius:5px; cursor:pointer; width:100%;">✏️ Editar Datos</button>
                 </div>
                 <div class="cv-main">
-                    <h1>${f.nombre}</h1>
-                    <p style="color:var(--azul-claro); font-weight:bold;">${f.fisc}</p>
-                    <h3 style="margin-top:30px;">Historial</h3>
-                    <p style="margin-top:10px; line-height:1.6; white-space: pre-line;">${f.hist || 'Sin historial registrado.'}</p>
+                    <h1 style="font-size:2.4rem; color:var(--azul-header);">${f.nombre}</h1>
+                    <p style="color:var(--azul-claro); font-weight:800; text-transform:uppercase; letter-spacing:1px; margin-top:5px;">${f.fisc}</p>
+                    
+                    <h3 style="margin-top:40px; color:var(--azul-header); border-bottom:2px solid #f0f0f0; padding-bottom:10px;">HISTORIAL Y NOTAS</h3>
+                    <p style="margin-top:20px; line-height:1.8; color:#444; white-space: pre-line; font-size:0.95rem;">${f.hist || 'No se registra historial adicional.'}</p>
                 </div>`;
         }
+
+        function volverAtras() { if (nivelActual === "fiscalizadores") verCongregaciones(ciudadSeleccionada); else renderCiudades(); }
+        function agrandarFoto(url) { document.getElementById('fotoAgrandada').src = url; document.getElementById('modalFoto').style.display = 'flex'; }
 
         function abrirEditor(id = null) {
             idEdicion = id;
@@ -372,10 +298,12 @@
                 document.getElementById('inCong').value = f.cong;
                 document.getElementById('inFisc').value = f.fisc;
                 document.getElementById('inTel').value = f.tel;
+                document.getElementById('inEdad').value = f.edad;
+                document.getElementById('inHist').value = f.hist || "";
                 tmpFoto = f.foto || "";
                 document.getElementById('prevImg').src = f.foto || "https://via.placeholder.com/90";
             } else {
-                document.querySelectorAll('#vistaEditor input').forEach(i => i.value = "");
+                document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
                 tmpFoto = "";
                 document.getElementById('prevImg').src = "https://via.placeholder.com/90";
             }
@@ -383,14 +311,14 @@
 
         function procesarFoto(input) {
             if (input.files && input.files[0]) {
-                let reader = new FileReader();
-                reader.onload = e => { tmpFoto = e.target.result; document.getElementById('prevImg').src = tmpFoto; };
-                reader.readAsDataURL(input.files[0]);
+                let r = new FileReader();
+                r.onload = e => { tmpFoto = e.target.result; document.getElementById('prevImg').src = tmpFoto; };
+                r.readAsDataURL(input.files[0]);
             }
         }
 
         async function guardar() {
-            const registro = {
+            const reg = {
                 nombre: document.getElementById('inNom').value,
                 pais: document.getElementById('inPais').value,
                 ciudad: document.getElementById('inCiu').value,
@@ -398,11 +326,12 @@
                 fisc: document.getElementById('inFisc').value,
                 tel: document.getElementById('inTel').value,
                 edad: document.getElementById('inEdad').value,
+                hist: document.getElementById('inHist').value,
                 foto: tmpFoto,
                 fecha: new Date().getTime()
             };
-            if(idEdicion) await dbCloud.collection("curriculums").doc(idEdicion).update(registro);
-            else await dbCloud.collection("curriculums").add(registro);
+            if(idEdicion) await db.collection("curriculums").doc(idEdicion).update(reg);
+            else await db.collection("curriculums").add(reg);
             irDashboard();
         }
     </script>
