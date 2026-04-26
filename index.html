@@ -30,33 +30,28 @@
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
         body { background-color: var(--bg-gris); color: var(--texto-oscuro); line-height: 1.6; }
 
-        /* --- LOADER --- */
         #loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(10,31,51,0.95); z-index: 9999;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
             color: white;
         }
         .spinner {
             border: 5px solid rgba(255,255,255,0.2);
             border-top: 5px solid var(--azul-claro);
             border-radius: 50%; width: 60px; height: 60px;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
+            animation: spin 1s linear infinite; margin-bottom: 20px;
         }
         @keyframes spin { 0% {transform: rotate(0deg);} 100% {transform: rotate(360deg);} }
 
-        /* --- TOAST NOTIFICATIONS --- */
         #toast {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%);
             background: var(--verde); color: white; padding: 15px 30px;
             border-radius: 10px; z-index: 3000; display: none;
             box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            animation: slideUp 0.3s ease;
+            font-weight: 600;
         }
-        @keyframes slideUp { from {bottom:-50px; opacity:0;} to {bottom:30px; opacity:1;} }
 
-        /* --- MODAL FOTO --- */
         #modalFoto {
             display: none; position: fixed; z-index: 2000;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -65,12 +60,9 @@
         }
         #fotoAgrandada {
             max-width: 90%; max-height: 85%;
-            border-radius: 10px;
-            box-shadow: 0 0 30px rgba(255,255,255,0.1);
-            border: 2px solid white;
+            border-radius: 10px; border: 2px solid white;
         }
 
-        /* --- MODAL CONFIRMACIÓN --- */
         #modalConfirm {
             display: none; position: fixed; z-index: 2500;
             top: 0; left: 0; width: 100%; height: 100%;
@@ -84,7 +76,6 @@
         .confirm-box h3 { color: var(--rojo); margin-bottom: 15px; }
         .confirm-box p { margin-bottom: 25px; color: var(--texto-suave); }
 
-        /* --- LOGIN --- */
         #vistaLogin { 
             height: 100vh; display: flex; align-items: center; justify-content: center; 
             background: linear-gradient(135deg, var(--azul-header) 0%, #1a3a5c 100%);
@@ -100,30 +91,26 @@
         .login-box input { 
             width: 100%; padding: 14px; margin-bottom: 15px; 
             border: 2px solid #e2e8f0; border-radius: 10px; outline: none;
-            transition: 0.3s; font-size: 1rem;
+            font-size: 1rem;
         }
         .login-box input:focus { border-color: var(--azul-claro); }
 
-        /* --- HEADER --- */
         header { 
             background: var(--azul-header); color: white; 
             padding: 15px 30px; display: flex; 
             justify-content: space-between; align-items: center; 
             position: sticky; top: 0; z-index: 100;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
         header h1 { font-size: 1.1rem; letter-spacing: 2px; font-weight: 800; color: var(--azul-claro); }
         .btn-logout {
             background: none; border: 1px solid rgba(255,255,255,0.3); color: white;
             padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.8rem;
-            transition: 0.3s;
         }
         .btn-logout:hover { background: var(--rojo); border-color: var(--rojo); }
         
-        /* --- STATS --- */
         .stats-bar {
             background: white; padding: 15px 30px;
-            display: flex; gap: 20px; flex-wrap: wrap;
+            display: flex; gap: 15px; flex-wrap: wrap;
             border-bottom: 1px solid #e2e8f0;
         }
         .stat-item {
@@ -140,20 +127,19 @@
         .search-input { 
             flex-grow: 1; min-width: 200px; padding: 12px 20px; 
             border-radius: 10px; border: 2px solid #e2e8f0; outline: none;
-            transition: 0.3s;
         }
         .search-input:focus { border-color: var(--azul-claro); }
         
         .btn-new { 
             background: var(--azul-claro); color: white; border: none; 
             padding: 12px 25px; border-radius: 8px; font-weight: 600; 
-            cursor: pointer; transition: 0.3s; font-size: 0.95rem;
+            cursor: pointer; font-size: 0.95rem;
         }
-        .btn-new:hover { background: #0e8baa; transform: translateY(-2px); }
+        .btn-new:hover { background: #0e8baa; }
         .btn-red {
             background: var(--rojo); color: white; border: none;
             padding: 10px 20px; border-radius: 8px; font-weight: 600;
-            cursor: pointer; transition: 0.3s;
+            cursor: pointer;
         }
         .btn-red:hover { background: #b91c1c; }
 
@@ -181,7 +167,7 @@
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
         .card { 
             background: white; border-radius: 15px; padding: 20px; 
-            border: 1px solid #e2e8f0; transition: 0.3s;
+            border: 1px solid #e2e8f0;
         }
         .card:hover { box-shadow: 0 8px 20px rgba(0,0,0,0.08); }
         .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
@@ -195,11 +181,49 @@
 
         .empty-state {
             text-align: center; padding: 60px 20px; color: var(--texto-suave);
+            grid-column: 1 / -1;
         }
         .empty-state .icon { font-size: 4rem; margin-bottom: 15px; }
 
-        /* --- VISTA CV --- */
         #vistaCV { display: none; background: #f1f5f9; min-height: 100vh; padding: 20px 0; }
         .cv-container { 
             max-width: 1000px; margin: 0 auto; background: white; 
-            display: flex; box-shadow: 0 0 50px rgba
+            display: flex; box-shadow: 0 0 50px rgba(0,0,0,0.1);
+            border-radius: 15px; overflow: hidden;
+        }
+        
+        .cv-aside { width: 35%; background: var(--azul-header); color: white; padding: 40px 30px; }
+        .cv-main { width: 65%; padding: 50px 45px; background: white; position: relative; }
+
+        .cv-photo-frame { 
+            width: 170px; height: 170px; border-radius: 50%; 
+            border: 4px solid var(--azul-claro); overflow: hidden; 
+            margin: 0 auto 30px; cursor: pointer;
+            background: #1a3a5c;
+        }
+        .cv-photo-frame img { width: 100%; height: 100%; object-fit: cover; }
+
+        .cv-section-title-aside { 
+            border-bottom: 1px solid rgba(255,255,255,0.2); 
+            padding-bottom: 8px; margin: 30px 0 15px; 
+            font-size: 0.85rem; letter-spacing: 2px; 
+            color: var(--azul-claro); font-weight: 800;
+        }
+        .aside-data { 
+            font-size: 0.9rem; margin-bottom: 12px; color: #cbd5e1; 
+            display: flex; align-items: flex-start; gap: 10px;
+            word-break: break-word;
+        }
+
+        .cv-name { 
+            font-size: 2.5rem; font-weight: 800; color: var(--azul-header); 
+            line-height: 1.1; margin-bottom: 10px;
+        }
+        .cv-role { 
+            color: var(--azul-claro); font-weight: 700; text-transform: uppercase; 
+            font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 35px;
+        }
+        
+        .cv-section-body { 
+            font-size: 1.3rem; font-weight: 700; margin-bottom: 15px; 
+            color: var(--azul-header); border-left:
