@@ -47,17 +47,26 @@
         .folder-card, .card { background: #1a1a1a; padding: 25px; border-radius: 15px; border: 1px solid #333; text-align: center; cursor: pointer; }
         .card-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--azul-claro); }
 
-        /* VISTA CV ESTILO IMAGEN */
-        .cv-sheet { max-width: 500px; margin: 20px auto; background: #1a1a1a; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.5); position: relative; }
-        .cv-aside { background: #050a14; padding: 40px 30px; text-align: left; }
-        .cv-photo { width: 180px; height: 180px; border-radius: 50%; border: 3px solid var(--azul-claro); object-fit: cover; display: block; margin: 0 auto 30px; cursor: zoom-in; }
-        .cv-section-title { color: var(--azul-claro); font-size: 0.8rem; font-weight: 800; border-bottom: 1px solid #1e293b; padding-bottom: 5px; margin: 20px 0 15px; letter-spacing: 1px; }
+        /* VISTA CV REORGANIZADA */
+        .cv-sheet { max-width: 900px; margin: 20px auto; background: #1a1a1a; min-height: 100vh; box-shadow: 0 0 30px rgba(0,0,0,0.5); border-radius: 8px; overflow: hidden; display: flex; flex-wrap: wrap; }
+        
+        /* BLOQUE 1 Y 2: FOTO Y NOMBRE (AHORA ARRIBA) */
+        .cv-header-block { width: 100%; padding: 40px; background: #000; text-align: center; border-bottom: 1px solid #1e293b; display: flex; flex-direction: column; align-items: center; justify-content: center;}
+        .cv-photo { width: 180px; height: 180px; border-radius: 50%; border: 3px solid var(--azul-claro); object-fit: cover; cursor: zoom-in; margin-bottom: 25px; }
+        .cv-name { font-size: 2.5rem; font-weight: 800; line-height: 1.1; color: #fff; margin-bottom: 10px; text-transform: uppercase;}
+        .cv-sub { color: var(--azul-claro); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
+
+        /* CONTENEDOR DE DATOS Y COLUMNA DERECHA */
+        .cv-body-content { width: 100%; display: flex; flex-wrap: wrap; }
+
+        /* BLOQUE 3 (IZQUIERDO): DATOS */
+        .cv-aside { width: 35%; background: #050a14; padding: 40px 30px; text-align: left; min-width: 280px;}
+        .cv-section-title { color: var(--azul-claro); font-size: 0.8rem; font-weight: 800; border-bottom: 1px solid #1e293b; padding-bottom: 5px; margin: 0 0 15px; letter-spacing: 1px; }
         .cv-aside p { font-size: 0.95rem; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; color: #cbd5e1; }
 
-        .cv-main { padding: 40px 30px; background: #1a1a1a; }
-        .cv-name { font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; color: #fff; }
-        .cv-sub { color: var(--azul-claro); font-weight: 800; font-size: 0.9rem; text-transform: uppercase; margin-bottom: 5px; }
-        .cv-hist-title { font-size: 1.2rem; font-weight: 700; margin: 35px 0 15px; color: #fff; }
+        /* COLUMNA DERECHA */
+        .cv-main { width: 65%; padding: 40px 30px; background: #1a1a1a; min-width: 320px;}
+        .cv-hist-title { font-size: 1.2rem; font-weight: 700; margin: 0 0 15px; color: #fff; }
         .cv-bullet { display: flex; align-items: flex-start; gap: 15px; margin-bottom: 20px; }
         .cv-bullet-icon { color: var(--flecha); font-size: 1.2rem; }
         .cv-bullet-text b { display: block; color: #fff; font-size: 1rem; margin-bottom: 2px; }
@@ -103,6 +112,9 @@
     </div>
 
     <div id="vistaCV">
+        <div style="padding: 20px 40px; background: #000;">
+            <button onclick="irDashboard()" style="background:none; border:none; color:white; cursor:pointer; font-size:1.1rem;">← ATRÁS</button>
+        </div>
         <div id="cvDetalle" class="cv-sheet"></div>
     </div>
 
@@ -189,6 +201,7 @@
         function verCongregaciones(ciu) {
             nivelActual = "congregaciones";
             ciudadSeleccionada = ciu;
+            document.getElementById('txtTitulo').innerText = "Ciudad: " + ciu;
             document.getElementById('btnVolver').style.display = 'block';
             const cont = document.getElementById('mainGrid');
             cont.innerHTML = "";
@@ -199,6 +212,7 @@
 
         function verFiscalizadores(ciu, con) {
             nivelActual = "fiscalizadores";
+            document.getElementById('txtTitulo').innerText = "Congregación: " + con;
             const cont = document.getElementById('mainGrid');
             cont.innerHTML = "";
             dataLocal.filter(f => f.ciudad === ciu && f.cong === con).forEach(f => {
@@ -213,52 +227,56 @@
 
         function verCV(idCloud) {
             const f = dataLocal.find(x => x.id_cloud === idCloud);
+            const formattedName = f.nombre.split(' ').join('<br>');
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvDetalle').innerHTML = `
-                <div class="cv-aside">
-                    <button onclick="irDashboard()" style="background:none; border:none; color:white; cursor:pointer; margin-bottom:20px;">← ATRÁS</button>
+                <div class="cv-header-block">
                     <img src="${f.foto || 'https://via.placeholder.com/150'}" class="cv-photo" onclick="document.getElementById('fotoAgrandada').src=this.src; document.getElementById('modalFoto').style.display='flex'">
-                    
-                    <div class="cv-section-title">CONTACTO</div>
-                    <p>📱 ${f.tel || 'S/N'}</p>
-                    <p>📍 ${f.ciudad}</p>
-                    <p>⛪ ${f.cong}</p>
-
-                    <div class="cv-section-title">DATOS</div>
-                    <p>🎂 Edad: ${f.edad || '---'}</p>
-                    <p>💍 Estado: ${f.estCiv || '---'}</p>
-                    <p>📋 Fiscalizador: ${f.fiscTipo || '---'}</p>
-                    <button onclick="abrirEditor('${f.id_cloud}')" style="margin-top:20px; background:none; border:1px solid #333; color:gray; font-size:0.6rem; cursor:pointer;">EDITAR DATOS</button>
-                </div>
-                <div class="cv-main">
-                    <div class="cv-name">${f.nombre.split(' ').join('<br>')}</div>
+                    <div class="cv-name">${formattedName}</div>
                     <div class="cv-sub">CIUDAD - ${f.ciudad.toUpperCase()}</div>
                     <div class="cv-sub">CONGREGACIÓN - ${f.cong.toUpperCase()}</div>
+                </div>
 
-                    <div class="cv-hist-title">Historial de Vida</div>
-                    <p style="color:#94a3b8; font-size:0.95rem; line-height:1.4;">${f.hist || '---'}</p>
+                <div class="cv-body-content">
+                    <div class="cv-aside">
+                        <div class="cv-section-title">CONTACTO</div>
+                        <p>📱 ${f.tel || 'S/N'}</p>
+                        <p>📍 ${f.ciudad}</p>
+                        <p>⛪ ${f.cong}</p>
 
-                    <div style="margin-top:40px;">
-                        <div class="cv-bullet">
-                            <div class="cv-bullet-icon">▶</div>
-                            <div class="cv-bullet-text"><b>Ocupación Espiritual:</b><span>${f.ocuEsp || '---'}</span></div>
-                        </div>
-                        <div class="cv-bullet">
-                            <div class="cv-bullet-icon">▶</div>
-                            <div class="cv-bullet-text"><b>Ocupación Material:</b><span>${f.ocuMat || '---'}</span></div>
-                        </div>
-                        <div class="cv-bullet">
-                            <div class="cv-bullet-icon">▶</div>
-                            <div class="cv-bullet-text"><b>Años Perseverancia:</b><span>${f.anosP || '---'}</span></div>
-                        </div>
-                        <div class="cv-bullet">
-                            <div class="cv-bullet-icon">▶</div>
-                            <div class="cv-bullet-text"><b>Estado Actual:</b><span>${f.estAct || '---'}</span></div>
-                        </div>
-                        <div class="cv-bullet">
-                            <div class="cv-bullet-icon">▶</div>
-                            <div class="cv-bullet-text"><b>Fiscalizador:</b><span>${f.fiscTipo || '---'}</span></div>
+                        <div class="cv-section-title">DATOS</div>
+                        <p>🎂 Edad: ${f.edad || '---'}</p>
+                        <p>💍 Estado: ${f.estCiv || '---'}</p>
+                        <p>📋 Fiscalizador: ${f.fiscTipo || '---'}</p>
+                        <button onclick="abrirEditor('${f.id_cloud}')" style="margin-top:20px; background:none; border:1px solid #333; color:gray; font-size:0.6rem; cursor:pointer;">EDITAR DATOS</button>
+                    </div>
+
+                    <div class="cv-main">
+                        <div class="cv-hist-title">Historial de Vida</div>
+                        <p style="color:#94a3b8; font-size:0.95rem; line-height:1.4; margin-bottom: 30px;">${f.hist || '---'}</p>
+
+                        <div style="margin-top:10px;">
+                            <div class="cv-bullet">
+                                <div class="cv-bullet-icon">▶</div>
+                                <div class="cv-bullet-text"><b>Ocupación Espiritual:</b><span>${f.ocuEsp || '---'}</span></div>
+                            </div>
+                            <div class="cv-bullet">
+                                <div class="cv-bullet-icon">▶</div>
+                                <div class="cv-bullet-text"><b>Ocupación Material:</b><span>${f.ocuMat || '---'}</span></div>
+                            </div>
+                            <div class="cv-bullet">
+                                <div class="cv-bullet-icon">▶</div>
+                                <div class="cv-bullet-text"><b>Años Perseverancia:</b><span>${f.anosP || '---'}</span></div>
+                            </div>
+                            <div class="cv-bullet">
+                                <div class="cv-bullet-icon">▶</div>
+                                <div class="cv-bullet-text"><b>Estado Actual:</b><span>${f.estAct || '---'}</span></div>
+                            </div>
+                            <div class="cv-bullet">
+                                <div class="cv-bullet-icon">▶</div>
+                                <div class="cv-bullet-text"><b>Fiscalizador:</b><span>${f.fiscTipo || '---'}</span></div>
+                            </div>
                         </div>
                     </div>
                 </div>`;
