@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
 <head> 
-    <link rel="manifest" href="manifest.json?v=106">
-    <link rel="apple-touch-icon" href="logo.png">
-    <link rel="icon" type="image/png" href="logo.png">
-    
-    <script>
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-      }
-    </script>
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SISTEMA FISCALIZADORES - ELITE</title>
@@ -36,7 +26,7 @@
         .login-box { background: white; padding: 40px; border-radius: 15px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; outline: none; }
 
-        /* --- HEADER Y NAVEGACIÓN --- */
+        /* --- HEADER Y DASHBOARD --- */
         header { background: var(--azul-header); color: white; padding: 15px 40px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
         header h1 { font-size: 1.4rem; letter-spacing: 2px; font-weight: 800; color: var(--azul-claro); }
         
@@ -44,7 +34,6 @@
         .search-input { flex-grow: 1; padding: 12px 20px; border-radius: 10px; border: 1px solid #cbd5e1; outline: none; }
         .btn-new { background: var(--azul-claro); color: white; border: none; padding: 12px 25px; border-radius: 8px; font-weight: 600; cursor: pointer; }
 
-        /* --- GRIDS Y CARPETAS --- */
         .container { padding: 30px 40px; }
         .grid-folder { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 25px; }
         .folder-card { background: white; padding: 30px; border-radius: 15px; text-align: center; cursor: pointer; border: 2px solid transparent; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
@@ -53,73 +42,60 @@
         .folder-badge { background: #f0f9ff; color: var(--azul-claro); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-top: 10px; display: inline-block; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: white; border-radius: 15px; padding: 20px; border: 1px solid #e2e8f0; position: relative; }
+        .card { background: white; border-radius: 15px; padding: 20px; border: 1px solid #e2e8f0; }
         .card-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
         .card-img { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; border: 2px solid var(--azul-claro); }
-        .btn-view { width: 100%; padding: 10px; background: #f0f9ff; border: none; border-radius: 8px; color: var(--azul-claro); font-weight: 700; cursor: pointer; }
 
-        /* --- VISTA CV (CORREGIDO PARA COPIAR TU DISEÑO EXACTO) --- */
-        #vistaCV { padding: 0; background-color: var(--bg-gris); }
-        .cv-wrapper { width: 100%; height: 100vh; display: flex; background: var(--bg-gris); }
+        /* --- DISEÑO CV IDÉNTICO A TUS FOTOS --- */
+        #vistaCV { display: none; }
+        .cv-wrapper { width: 100%; min-height: 100vh; display: flex; }
         
-        /* Contenedor lateral OSCURO (IDÉNTICO A TUS FOTOS) */
-        .cv-aside { width: 35%; background: var(--azul-header); color: white; padding: 60px 40px; display: flex; flex-direction: column; align-items: center; min-width: 320px; }
-        .cv-photo-wrapper { width: 180px; height: 180px; border-radius: 50%; border: 6px solid var(--azul-claro); overflow: hidden; margin-bottom: 40px; cursor: zoom-in; }
-        .cv-photo { width: 100%; height: 100%; object-fit: cover; }
+        .cv-aside { width: 350px; background: var(--azul-header); color: white; padding: 60px 40px; min-height: 100vh; }
+        .cv-photo-circle { width: 180px; height: 180px; border-radius: 50%; border: 4px solid var(--azul-claro); overflow: hidden; margin: 0 auto 40px; }
+        .cv-photo-circle img { width: 100%; height: 100%; object-fit: cover; }
         
-        .cv-aside .cv-title { color: white; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 2px; margin: 30px 0 10px; text-align: left; width: 100%; }
-        .cv-aside .cv-bullet { color: white; font-size: 0.95rem; margin-bottom: 10px; width: 100%; text-align: left; }
-        
-        /* Contenedor principal CLARO */
-        .cv-main { width: 65%; padding: 80px 60px; overflow-y: auto; background: white; }
-        .cv-main h1 { font-size: 3rem; font-weight: 800; color: var(--azul-header); line-height: 1.1; }
-        .cv-location { color: var(--azul-claro); font-weight: bold; text-transform: uppercase; font-size: 0.9rem; margin-top: 5px; }
-        
-        .cv-main h3.cv-subtitle { color: var(--texto-oscuro); font-size: 1.2rem; font-weight: 600; margin-top: 50px; }
-        .cv-main .cv-historia { font-size: 0.9rem; color: #64748b; line-height: 1.8; white-space: pre-line; margin-top: 15px; }
-        
-        /* Estilos de las flechas azules en la vista principal */
-        .main-bullet { position: relative; padding-left: 30px; margin-top: 20px; color: #475569; font-size: 0.95rem; line-height: 1.5; }
-        .main-bullet::before { content: ''; position: absolute; left: 0; top: 4px; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 12px solid var(--flecha); }
+        .cv-aside h3 { border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; margin: 30px 0 15px; font-size: 1rem; letter-spacing: 1px; color: var(--azul-claro); }
+        .aside-item { margin-bottom: 12px; font-size: 0.95rem; display: flex; align-items: center; gap: 10px; }
 
-        /* MODAL FOTO (Efecto WhatsApp) */
-        #modalFoto { display: none; position: fixed; z-index: 1000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); align-items: center; justify-content: center; cursor: zoom-out; }
-        #fotoAgrandada { max-width: 90%; max-height: 85%; border-radius: 10px; border: 3px solid white; }
+        .cv-main { flex: 1; padding: 80px 60px; background: white; }
+        .cv-main h1 { font-size: 3.5rem; font-weight: 800; color: #1e293b; margin-bottom: 5px; }
+        .cv-subtitle-blue { color: var(--azul-claro); font-weight: 700; text-transform: uppercase; font-size: 0.9rem; margin-bottom: 50px; }
+        
+        .cv-section-title { font-size: 1.5rem; font-weight: 700; color: #334155; margin-bottom: 15px; border-left: 5px solid var(--azul-header); padding-left: 15px; }
+        .cv-historia { font-size: 1rem; color: #64748b; line-height: 1.7; margin-bottom: 40px; }
+        
+        /* Flechas azules */
+        .cv-info-row { position: relative; padding-left: 35px; margin-bottom: 25px; font-size: 1.05rem; }
+        .cv-info-row::before { content: ''; position: absolute; left: 0; top: 4px; border-top: 8px solid transparent; border-bottom: 8px solid transparent; border-left: 14px solid var(--flecha); }
+        .cv-info-row strong { color: #1e293b; display: block; margin-bottom: 3px; }
 
         /* EDITOR */
-        #vistaEditor { padding: 40px; }
-        .editor-box { max-width: 850px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .preview-area { grid-column: span 2; display: flex; align-items: center; gap: 20px; background: #f8fafc; padding: 15px; border-radius: 10px; }
-        input, textarea, select { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; outline: none; }
-
-        #vistaDashboard, #vistaCV, #vistaEditor { display: none; }
+        #vistaEditor { display: none; padding: 40px; }
+        .editor-box { max-width: 800px; margin: 0 auto; background: white; padding: 40px; border-radius: 15px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #cbd5e1; border-radius: 8px; margin-top: 5px; }
     </style>
 </head>
 <body>
 
-    <div id="modalFoto" onclick="this.style.display='none'">
-        <img id="fotoAgrandada" src="">
-    </div>
-
     <div id="vistaLogin">
         <div class="login-box">
-            <h2 style="margin-bottom: 20px; color: var(--azul-header);">SISTEMA ELITE 🕊️</h2>
+            <h2 style="margin-bottom: 20px;">SISTEMA ELITE 🕊️</h2>
             <input type="text" id="userInput" placeholder="Usuario">
             <input type="password" id="passInput" placeholder="Contraseña">
             <button class="btn-new" style="width:100%" onclick="login()">ENTRAR</button>
         </div>
     </div>
 
-    <div id="vistaDashboard">
+    <div id="vistaDashboard" style="display:none;">
         <header>
-            <h1>SISTEMA ELITE</h1>
-            <button onclick="logout()" style="background:none; border:1px solid white; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">Cerrar</button>
+            <h1>FISCALIZADORES</h1>
+            <button onclick="logout()" style="background:none; border:1px solid white; color:white; padding:5px 10px; border-radius:5px; cursor:pointer;">Cerrar Sesión</button>
         </header>
 
         <div class="search-section">
-            <input type="text" id="inputBusqueda" class="search-input" placeholder="🔍 Buscar ciudad o filial..." onkeyup="buscador()">
-            <button class="btn-new" onclick="abrirEditor()">+ NUEVO</button>
+            <input type="text" id="inputBusqueda" class="search-input" placeholder="Buscar por nombre, ciudad o filial..." onkeyup="buscador()">
+            <button class="btn-new" onclick="abrirEditor()">+ REGISTRAR NUEVO</button>
         </div>
 
         <div class="container">
@@ -138,27 +114,26 @@
 
     <div id="vistaEditor">
         <div class="editor-box">
-            <h2 id="editorTitulo">Registro de Fiscalizador</h2>
-            <div class="form-grid" style="margin-top:20px;">
-                <div class="preview-area">
-                    <img id="prevImg" src="https://via.placeholder.com/90" style="width:90px; height:90px; border-radius:50%; object-fit:cover;">
-                    <input type="file" onchange="procesarFoto(this)">
+            <h2>Datos del Fiscalizador</h2>
+            <div class="form-grid">
+                <div style="grid-column: span 2;">
+                    <label>Foto URL</label><input type="text" id="inFoto" placeholder="Link de la foto">
                 </div>
-                <div style="grid-column: span 2;"><label>Nombre Completo</label><input type="text" id="inNom"></div>
+                <div style="grid-column: span 2;"><label>Nombre</label><input type="text" id="inNom"></div>
                 <div><label>Ciudad</label><input type="text" id="inCiu"></div>
-                <div><label>Filial (Congregación)</label><input type="text" id="inCong"></div>
+                <div><label>Filial</label><input type="text" id="inCong"></div>
                 <div><label>WhatsApp</label><input type="text" id="inTel"></div>
                 <div><label>Edad</label><input type="number" id="inEdad"></div>
-                <div><label>Estado Civil (Soltero/a, Casado/a)</label><input type="text" id="inCiv"></div>
-                <div><label>Fiscalizador: De (Jóvenes, Adultos, etc.)</label><input type="text" id="inDeDe"></div>
+                <div><label>Estado Civil</label><input type="text" id="inCiv"></div>
+                <div><label>Fiscalizador de:</label><input type="text" id="inDeDe"></div>
                 <div style="grid-column: span 2;"><label>Historial de Vida</label><textarea id="inHist" rows="4"></textarea></div>
                 <div><label>Ocupación Espiritual</label><input type="text" id="inEsp"></div>
                 <div><label>Ocupación Material</label><input type="text" id="inMat"></div>
                 <div><label>Años Perseverancia</label><input type="text" id="inAnos"></div>
                 <div><label>Estado Actual</label><input type="text" id="inEst"></div>
-                <button id="btnGuardar" class="btn-new" style="grid-column: span 2;" onclick="guardar()">GUARDAR</button>
-                <button onclick="irDashboard()" style="grid-column: span 2; background:none; border:none; color:gray; cursor:pointer;">Cancelar</button>
             </div>
+            <button class="btn-new" style="width:100%; margin-top:20px;" onclick="guardar()">GUARDAR</button>
+            <button onclick="irDashboard()" style="width:100%; margin-top:10px; background:none; border:none; color:gray; cursor:pointer;">Cancelar</button>
         </div>
     </div>
 
@@ -175,13 +150,10 @@
         const db = firebase.firestore();
 
         let dataLocal = [];
-        let tmpFoto = "";
-        let nivelActual = "ciudades";
-        let ciudadSeleccionada = "";
         let idEdicion = null;
 
         function login() {
-            if(document.getElementById('userInput').value === "admin" && document.getElementById('passInput').value === "elite2026") {
+            if(document.getElementById('userInput').value === "admin") {
                 document.getElementById('vistaLogin').style.display = 'none';
                 irDashboard();
             }
@@ -193,106 +165,93 @@
             document.getElementById('vistaDashboard').style.display = 'block';
             document.getElementById('vistaCV').style.display = 'none';
             document.getElementById('vistaEditor').style.display = 'none';
-            escucharDatos();
-        }
-
-        function escucharDatos() {
-            db.collection("curriculums").orderBy("fecha", "desc").onSnapshot((qs) => {
+            db.collection("curriculums").onSnapshot(qs => {
                 dataLocal = [];
-                qs.forEach((doc) => { dataLocal.push({ id_cloud: doc.id, ...doc.data() }); });
+                qs.forEach(doc => dataLocal.push({id: doc.id, ...doc.data()}));
                 renderCiudades();
             });
         }
 
         function renderCiudades() {
-            nivelActual = "ciudades";
             document.getElementById('btnVolver').style.display = 'none';
-            document.getElementById('txtTitulo').innerText = "CIUDADES:";
             const cont = document.getElementById('mainGrid');
-            cont.className = "grid-folder";
             cont.innerHTML = "";
             const ciudades = [...new Set(dataLocal.map(f => f.ciudad))];
             ciudades.forEach(ciu => {
-                const cant = dataLocal.filter(f => f.ciudad === ciu).length;
-                cont.innerHTML += `<div class="folder-card" onclick="verCongregaciones('${ciu}')"><span class="folder-icon">📍</span><h3>${ciu}</h3><span class="folder-badge">${cant}</span></div>`;
+                cont.innerHTML += `<div class="folder-card" onclick="verFiscalizadores('${ciu}')"><span class="folder-icon">📍</span><h3>${ciu}</h3></div>`;
             });
         }
 
-        function verCongregaciones(ciu) {
-            nivelActual = "congregaciones";
-            ciudadSeleccionada = ciu;
-            document.getElementById('btnVolver').style.display = 'block';
-            document.getElementById('txtTitulo').innerText = "Ciudad: " + ciu;
-            const cont = document.getElementById('mainGrid');
-            cont.innerHTML = "";
-            const congs = [...new Set(dataLocal.filter(f => f.ciudad === ciu).map(f => f.cong))];
-            congs.forEach(con => {
-                cont.innerHTML += `<div class="folder-card" onclick="verFiscalizadores('${ciu}', '${con}')"><span class="folder-icon"> Igreja </span><h3>${con}</h3></div>`;
-            });
-        }
-
-        function verFiscalizadores(ciu, con) {
-            nivelActual = "fiscalizadores";
-            document.getElementById('txtTitulo').innerText = "Filial: " + con;
-            const cont = document.getElementById('mainGrid');
-            cont.className = "cards-grid";
-            cont.innerHTML = "";
-            dataLocal.filter(f => f.ciudad === ciu && f.cong === con).forEach(f => {
-                cont.innerHTML += `<div class="card"><div class="card-header"><img src="${f.foto || 'https://via.placeholder.com/60'}" class="card-img"><div><h3>${f.nombre}</h3><p style="color:var(--azul-claro); font-size:0.8rem;">${f.deDe}</p></div></div><button class="btn-new" style="width:100%" onclick="verCV('${f.id_cloud}')">ABRIR</button></div>`;
-            });
-        }
-
-        function buscador() {
-            const q = document.getElementById('inputBusqueda').value.toLowerCase();
-            if(!q) { renderCiudades(); return; }
+        function verFiscalizadores(ciu) {
             document.getElementById('btnVolver').style.display = 'block';
             const cont = document.getElementById('mainGrid');
-            cont.className = "grid-folder";
             cont.innerHTML = "";
-            const filtrados = dataLocal.filter(f => f.ciudad.toLowerCase().includes(q) || f.cong.toLowerCase().includes(q));
-            const congsUnicas = [...new Set(filtrados.map(f => f.cong))];
-            congsUnicas.forEach(con => {
-                const regs = dataLocal.filter(f => f.cong === con);
-                cont.innerHTML += `<div class="folder-card" onclick="verFiscalizadores('${regs[0].ciudad}', '${con}')"><span class="folder-icon">📂</span><h3>${con}</h3><p style="font-size:0.7rem; color:gray;">${regs[0].ciudad}</p></div>`;
+            dataLocal.filter(f => f.ciudad === ciu).forEach(f => {
+                cont.innerHTML += `
+                <div class="card">
+                    <div class="card-header">
+                        <img src="${f.foto}" class="card-img">
+                        <div><h3>${f.nombre}</h3><p>${f.cong}</p></div>
+                    </div>
+                    <button class="btn-new" style="width:100%" onclick="verCV('${f.id}')">ABRIR PERFIL</button>
+                </div>`;
             });
         }
 
-        // --- FUNCIÓN QUE COPIA TU DISEÑO AL 100% ---
-        function verCV(idCloud) {
-            const f = dataLocal.find(x => x.id_cloud === idCloud);
+        function verCV(id) {
+            const f = dataLocal.find(x => x.id === id);
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
-            const fotoUrl = f.foto || 'https://via.placeholder.com/180';
             
             document.getElementById('cvDetalle').innerHTML = `
                 <div class="cv-aside">
-                    <button onclick="irDashboard()" style="position: absolute; top: 30px; left: 30px; color: var(--azul-claro); background: none; border: none; font-weight: bold; cursor: pointer;">← VOLVER</button>
-                    
-                    <div class="cv-photo-wrapper">
-                        <img src="${fotoUrl}" class="cv-photo" onclick="agrandarFoto('${fotoUrl}')">
-                    </div>
-                    
-                    <h3 class="cv-title">CONTACTO</h3>
-                    <div class="cv-bullet">📱 ${f.tel}</div>
-                    <div class="cv-bullet">📍 ${f.ciudad}</div>
-                    <div class="cv-bullet">⛪ ${f.cong}</div>
-                    
-                    <h3 class="cv-title">DATOS</h3>
-                    <div class="cv-bullet">🎂 Edad: ${f.edad} años</div>
-                    <div class="cv-bullet">💍 Estado: ${f.civ}</div>
-                    <div class="cv-bullet">📋 Fiscalizador: De ${f.deDe}</div>
-                    
-                    <button onclick="abrirEditor('${f.id_cloud}')" style="margin-top:60px; background:rgba(255,255,255,0.1); color:white; border:none; padding:10px 20px; border-radius:5px; cursor:pointer; font-weight: bold;">✏️ Editar Datos</button>
+                    <button onclick="irDashboard()" style="color:white; background:none; border:none; cursor:pointer; margin-bottom:20px;">← ATRÁS</button>
+                    <div class="cv-photo-circle"><img src="${f.foto}"></div>
+                    <h3>CONTACTO</h3>
+                    <div class="aside-item">📱 ${f.tel}</div>
+                    <div class="aside-item">📍 ${f.ciudad}</div>
+                    <div class="aside-item">⛪ ${f.cong}</div>
+                    <h3>DATOS</h3>
+                    <div class="aside-item">🎂 Edad: ${f.edad} años</div>
+                    <div class="aside-item">💍 Estado: ${f.civ}</div>
+                    <div class="aside-item">📋 Fiscalizador: ${f.deDe}</div>
                 </div>
-                
                 <div class="cv-main">
                     <h1>${f.nombre}</h1>
-                    <div class="cv-location">CIUDAD - ${f.ciudad} / CONGREGACIÓN - ${f.cong}</div>
-                    
-                    <h3 class="cv-subtitle">Historial de Vida</h3>
-                    <p class="cv-historia">${f.hist || 'iauwgfoacbhloadshncaouhcu9ece'}</p>
-                    
-                    <div class="main-bullet"><strong>Ocupación Espiritual:</strong> ${f.esp}</div>
-                    <div class="main-bullet"><strong>Ocupación Material:</strong> ${f.mat}</div>
-                    <div class="main-bullet"><strong>Años Perseverancia:</strong> ${f.anos}</div>
-                    <div class="main-bullet"><strong>Estado Actual:</strong> ${f.est}
+                    <div class="cv-subtitle-blue">CIUDAD - ${f.ciudad} / CONGREGACIÓN - ${f.cong}</div>
+                    <h2 class="cv-section-title">Historial de Vida</h2>
+                    <p class="cv-historia">${f.hist}</p>
+                    <div class="cv-info-row"><strong>Ocupación Espiritual:</strong> ${f.esp}</div>
+                    <div class="cv-info-row"><strong>Ocupación Material:</strong> ${f.mat}</div>
+                    <div class="cv-info-row"><strong>Años Perseverancia:</strong> ${f.anos}</div>
+                    <div class="cv-info-row"><strong>Estado Actual:</strong> ${f.est}</div>
+                </div>`;
+        }
+
+        function abrirEditor() {
+            document.getElementById('vistaDashboard').style.display = 'none';
+            document.getElementById('vistaEditor').style.display = 'block';
+        }
+
+        async function guardar() {
+            const doc = {
+                nombre: document.getElementById('inNom').value,
+                ciudad: document.getElementById('inCiu').value,
+                cong: document.getElementById('inCong').value,
+                tel: document.getElementById('inTel').value,
+                edad: document.getElementById('inEdad').value,
+                civ: document.getElementById('inCiv').value,
+                deDe: document.getElementById('inDeDe').value,
+                hist: document.getElementById('inHist').value,
+                esp: document.getElementById('inEsp').value,
+                mat: document.getElementById('inMat').value,
+                anos: document.getElementById('inAnos').value,
+                est: document.getElementById('inEst').value,
+                foto: document.getElementById('inFoto').value
+            };
+            await db.collection("curriculums").add(doc);
+            irDashboard();
+        }
+    </script>
+</body>
+</html>
