@@ -28,21 +28,14 @@
         .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; }
         .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; margin-bottom: 10px; }
 
-        /* DASHBOARD GRID */
         .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 20px; }
         .card-folder { background: var(--card); padding: 30px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; transition: 0.3s; }
         .card-folder:hover { border-color: var(--accent); transform: translateY(-5px); }
         .card-img-circle { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; cursor: zoom-in; }
 
-        /* VISOR DE FOTOS */
-        .img-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); display: none; justify-content: center; 
-            align-items: center; z-index: 2000; cursor: zoom-out;
-        }
+        .img-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; cursor: zoom-out; }
         .img-overlay img { max-width: 90%; max-height: 90%; border-radius: 10px; }
 
-        /* CV PROFESIONAL */
         .cv-container { max-width: 950px; margin: 30px auto; background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid var(--borde); box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
         .cv-header { background: var(--accent); padding: 50px 20px; text-align: center; color: white; }
         .cv-photo-main { width: 150px; height: 150px; border-radius: 50%; border: 5px solid white; object-fit: cover; background: white; margin-bottom: 15px; cursor: zoom-in; }
@@ -54,7 +47,6 @@
         .data-label { font-size: 0.75rem; color: var(--texto-sec); font-weight: 600; display: block; }
         .data-value { font-size: 1rem; font-weight: 500; margin-bottom: 15px; display: block; }
 
-        /* EDITOR */
         .editor-box { max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--borde); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         input, textarea, select { width: 100%; padding: 12px; border-radius: 10px; border: 1px solid var(--borde); background: var(--bg); color: var(--texto); }
@@ -100,7 +92,7 @@
             <div class="form-grid">
                 <div><label class="data-label">Nombre Completo</label><input type="text" id="inNom"></div>
                 <div><label class="data-label">N° de Documento</label><input type="text" id="inDoc"></div>
-                <div><label class="data-label">Nacionalidad</label>
+                <div><label class="data-label">Nacionalidad (País)</label>
                     <select id="inNacIo">
                         <option value="🇵🇾">🇵🇾 Paraguay</option>
                         <option value="🇦🇷">🇦🇷 Argentina</option>
@@ -197,8 +189,20 @@
             nivel = "ciudades"; document.getElementById('btnBack').style.display = 'none';
             document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            [...new Set(miembros.map(m => m.ciudad))].forEach(c => {
-                grid.innerHTML += `<div class="card-folder" onclick="verCongs('${c}')"><span style="font-size:3rem;">📍</span><h3>${c}</h3></div>`;
+            
+            // Obtener ciudades únicas
+            const ciudadesUnicas = [...new Set(miembros.map(m => m.ciudad))];
+            
+            ciudadesUnicas.forEach(c => {
+                // Buscar el primer miembro de esa ciudad para obtener su bandera
+                const primerMiembro = miembros.find(m => m.ciudad === c);
+                const bandera = primerMiembro ? primerMiembro.nacionalidad : "📍";
+                
+                grid.innerHTML += `
+                <div class="card-folder" onclick="verCongs('${c}')">
+                    <span style="font-size:3rem;">${bandera}</span>
+                    <h3 style="margin-top:10px;">${c}</h3>
+                </div>`;
             });
         }
 
@@ -304,7 +308,7 @@
             irDashboard();
         }
 
-            irDashboard();
+        irDashboard();
     </script>
 </body>
 </html>
