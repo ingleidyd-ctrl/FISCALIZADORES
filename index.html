@@ -90,7 +90,19 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         }
         .folder-card:hover { border-color: var(--azul-claro); transform: translateY(-5px); }
-        .folder-icon { font-size: 3rem; margin-bottom: 15px; display: block; }
+        
+        /* Ajuste para que los iconos y banderas se vean bien en PC */
+        .folder-icon { 
+            font-size: 3.5rem; 
+            margin-bottom: 15px; 
+            display: block; 
+            line-height: 1.2;
+            min-height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
         .folder-badge { background: #f0f9ff; color: var(--azul-claro); padding: 5px 15px; border-radius: 20px; font-size: 0.8rem; font-weight: bold; margin-top: 10px; display: inline-block; }
 
         .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
@@ -298,7 +310,6 @@
             congs.forEach(con => {
                 const registros = dataLocal.filter(f => f.ciudad === ciu && f.cong === con);
                 const cant = registros.length;
-                // Tomamos la bandera del primer registro que encontremos de esa congregación
                 const pais = registros[0].pais || "Otro";
                 const bandera = banderas[pais] || "🌍";
 
