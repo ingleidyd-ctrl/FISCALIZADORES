@@ -112,6 +112,7 @@
         .cv-title { color: var(--azul-claro); text-transform: uppercase; font-size: 0.8rem; margin: 25px 0 10px; border-bottom: 1px solid #334155; padding-bottom: 5px; }
         .cv-bullet { position: relative; padding-left: 30px; margin-bottom: 15px; }
         .cv-bullet::before { content: ''; position: absolute; left: 0; top: 4px; border-top: 7px solid transparent; border-bottom: 7px solid transparent; border-left: 12px solid var(--flecha); }
+        .btn-edit-cv { position: absolute; top: 20px; right: 20px; background: #eee; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; font-size: 0.7rem; font-weight: bold; }
 
         /* MODAL FOTO AGRANDADA */
         #modalFoto {
@@ -212,13 +213,17 @@
                 <div style="grid-column: span 2;"><label>Función</label><input type="text" id="inFisc"></div>
                 <div><label>WhatsApp</label><input type="text" id="inTel"></div>
                 <div><label>Edad</label><input type="number" id="inEdad"></div>
+                <div style="grid-column: span 2;">
+                    <label>Historial / Notas</label>
+                    <textarea id="inHist" rows="4" placeholder="Escribe aquí el historial o notas adicionales..."></textarea>
+                </div>
                 <button id="btnGuardar" class="btn-new" style="grid-column: span 2;" onclick="guardar()">GUARDAR REGISTRO</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Configuración Firebase
+        // Configuración Firebase (Reemplaza con tus claves si es necesario)
         const firebaseConfig = {
           apiKey: "AIzaSyBkP6NALOTSHGd4QVgAxHyeJzCCnOUDY6M",
           authDomain: "fiscalizadores-elite.firebaseapp.com",
@@ -241,7 +246,8 @@
         function login() {
             const u = document.getElementById('userInput').value;
             const p = document.getElementById('passInput').value;
-            if(u === "admin" && p === "elite2026") {
+            // Contraseña ajustada a lo solicitado
+            if(u === "admin" && p === "fiscalizadores2026") { 
                 document.getElementById('vistaLogin').style.display = 'none';
                 irDashboard();
             } else { document.getElementById('errorLogin').style.display = 'block'; }
@@ -311,7 +317,6 @@
             else renderCiudades();
         }
 
-        // --- NUEVO BUSCADOR POR FILIALES ---
         function buscador() {
             const q = document.getElementById('inputBusqueda').value.toLowerCase();
             if(!q) { renderCiudades(); return; }
@@ -348,7 +353,7 @@
                 <div class="cv-aside">
                     <img src="${fotoUrl}" class="cv-photo" onclick="agrandarFoto('${fotoUrl}')" title="Clic para agrandar">
                     <h3 class="cv-title">CONTACTO</h3>
-                    <p>📱 ${f.tel}</p>
+                    <p>📱 ${f.tel || 'S/N'}</p>
                     <p>📍 ${f.ciudad}</p>
                     <p>⛪ ${f.cong}</p>
                 </div>
@@ -356,7 +361,7 @@
                     <h1>${f.nombre}</h1>
                     <p style="color:var(--azul-claro); font-weight:bold;">${f.fisc}</p>
                     <h3 style="margin-top:30px;">Historial</h3>
-                    <p style="margin-top:10px; line-height:1.6; white-space: pre-line;">${f.hist || 'Sin historial registrado.'}</p>
+                    <p style="margin-top:10px; line-height:1.6; white-space: pre-line; color: #555;">${f.hist || 'Sin historial registrado.'}</p>
                 </div>`;
         }
 
@@ -365,17 +370,23 @@
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'none';
             document.getElementById('vistaEditor').style.display = 'block';
+            
             if(id) {
                 const f = dataLocal.find(x => x.id_cloud === id);
+                document.getElementById('editorTitulo').innerText = "Editar Registro";
                 document.getElementById('inNom').value = f.nombre;
+                document.getElementById('inPais').value = f.pais || "Paraguay";
                 document.getElementById('inCiu').value = f.ciudad;
                 document.getElementById('inCong').value = f.cong;
                 document.getElementById('inFisc').value = f.fisc;
                 document.getElementById('inTel').value = f.tel;
+                document.getElementById('inEdad').value = f.edad || "";
+                document.getElementById('inHist').value = f.hist || "";
                 tmpFoto = f.foto || "";
                 document.getElementById('prevImg').src = f.foto || "https://via.placeholder.com/90";
             } else {
-                document.querySelectorAll('#vistaEditor input').forEach(i => i.value = "");
+                document.getElementById('editorTitulo').innerText = "Nuevo Registro";
+                document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
                 tmpFoto = "";
                 document.getElementById('prevImg').src = "https://via.placeholder.com/90";
             }
@@ -390,6 +401,7 @@
         }
 
         async function guardar() {
+            const btn = document.getElementById('btnGuardar');
             const registro = {
                 nombre: document.getElementById('inNom').value,
                 pais: document.getElementById('inPais').value,
@@ -398,12 +410,29 @@
                 fisc: document.getElementById('inFisc').value,
                 tel: document.getElementById('inTel').value,
                 edad: document.getElementById('inEdad').value,
+                hist: document.getElementById('inHist').value,
                 foto: tmpFoto,
                 fecha: new Date().getTime()
             };
-            if(idEdicion) await dbCloud.collection("curriculums").doc(idEdicion).update(registro);
-            else await dbCloud.collection("curriculums").add(registro);
-            irDashboard();
+
+            if(!registro.nombre || !registro.ciudad || !registro.cong) {
+                alert("Por favor completa: Nombre, Ciudad y Filial.");
+                return;
+            }
+
+            btn.innerText = "GUARDANDO...";
+            btn.disabled = true;
+
+            try {
+                if(idEdicion) await dbCloud.collection("curriculums").doc(idEdicion).update(registro);
+                else await dbCloud.collection("curriculums").add(registro);
+                irDashboard();
+            } catch (error) {
+                alert("Error al guardar: " + error);
+            } finally {
+                btn.innerText = "GUARDAR REGISTRO";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
