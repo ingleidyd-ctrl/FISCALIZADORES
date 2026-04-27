@@ -50,7 +50,6 @@
             box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--borde);
         }
 
-        /* Forzamos 16px para evitar el zoom de iOS en inputs */
         input, select, textarea { 
             font-size: 16px !important; 
             background: var(--card);
@@ -269,8 +268,8 @@
         let categoriaUsuario = "";
 
         function login() {
-            const email = document.getElementById('loginEmail').value.toLowerCase();
-            const pass = document.getElementById('loginPass').value;
+            const email = document.getElementById('loginEmail').value.toLowerCase().trim();
+            const pass = document.getElementById('loginPass').value.trim();
             const error = document.getElementById('loginError');
 
             if (USUARIOS_SISTEMA[email] && USUARIOS_SISTEMA[email].pass === pass) {
@@ -538,7 +537,6 @@
             });
         }
 
-        // Auto-login si hay sesión
         window.onload = () => {
             if(localStorage.getItem('fiscalizador_session') === 'active') {
                 categoriaUsuario = localStorage.getItem('fiscalizador_cat');
