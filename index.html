@@ -101,7 +101,6 @@
 <body>
 
     <script>
-        // Autodetección de modo oscuro al cargar
         if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
             document.documentElement.setAttribute("data-theme", "dark");
         }
@@ -120,7 +119,7 @@
 
     <div id="vistaDashboard">
         <div style="padding: 20px 40px; display: flex; gap: 15px;">
-            <input type="text" id="busqueda" placeholder="Buscar..." style="flex:1" onkeyup="buscador()">
+            <input type="text" id="busqueda" placeholder="Buscar por nombre, ciudad o congregación..." style="flex:1" onkeyup="buscador()">
             <button class="btn-primary" onclick="abrirEditor()">+ NUEVO REGISTRO</button>
         </div>
         <div style="padding: 0 40px;">
@@ -373,10 +372,29 @@
 
         function buscador() {
             const texto = document.getElementById('busqueda').value.toLowerCase();
-            const cards = document.querySelectorAll('.card-folder');
-            cards.forEach(card => {
-                const h3 = card.querySelector('h3').innerText.toLowerCase();
-                card.style.display = h3.includes(texto) ? 'block' : 'none';
+            const grid = document.getElementById('gridMain');
+            
+            if (texto === "") {
+                if (nivel === "ciudades") renderCiudades();
+                else if (nivel === "congs") verCongs(ciuSel);
+                else if (nivel === "miembros") verMiembros(ciuSel, congSelGlobal);
+                return;
+            }
+
+            // Si hay texto, buscamos en toda la base de datos de miembros
+            grid.innerHTML = "";
+            const resultados = miembros.filter(m => 
+                m.nombre.toLowerCase().includes(texto) || 
+                m.ciudad.toLowerCase().includes(texto) || 
+                m.cong.toLowerCase().includes(texto)
+            );
+
+            resultados.forEach(m => {
+                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <h3>${m.nombre}</h3>
+                    <p style="font-size:0.8rem; color:var(--texto-sec)">${m.ciudad} - ${m.cong}</p>
+                </div>`;
             });
         }
 
