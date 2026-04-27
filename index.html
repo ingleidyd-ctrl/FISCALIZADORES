@@ -31,16 +31,22 @@
             font-family: 'Plus Jakarta Sans', sans-serif; 
             transition: 0.3s;
             -webkit-tap-highlight-color: transparent;
-            /* MODIFICADO: touch-action manipulation evita el zoom por gestos en toda la app */
-            touch-action: manipulation;
+            /* Se deshabilitan los gestos de zoom por defecto en todos los elementos */
+            touch-action: none; 
         }
 
+        /* Permitimos scroll vertical para que la app sea usable */
         body { 
             background-color: var(--bg); color: var(--texto); line-height: 1.6; 
             overflow-x: hidden; width: 100%; position: relative;
+            touch-action: pan-y; 
         }
 
-        /* LOGIN STYLES */
+        /* Aseguramos que inputs y botones funcionen bien sin zoom */
+        input, select, textarea, button, .card-folder { 
+            touch-action: manipulation; 
+        }
+
         #vistaLogin {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px;
@@ -53,7 +59,6 @@
 
         input, select, textarea { 
             font-size: 16px !important; 
-            touch-action: manipulation;
             background: var(--card);
             border: 1px solid var(--borde);
             color: var(--texto);
@@ -107,13 +112,15 @@
         .editor-box { max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--borde); }
         .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
         
-        #imgOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
-        
-        /* MODIFICADO: El overlay sí permite zoom (pinch-zoom) para que el jefe pueda ver la foto grande */
+        /* OVERLAY DE IMAGEN: Aquí sí permitiremos zoom */
+        #imgOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); display: none; justify-content: center; 
+            align-items: center; z-index: 2000;
+        }
         #imgOverlay img { 
-            max-width: 95%; 
-            max-height: 95%; 
-            border-radius: 10px; 
+            max-width: 95%; max-height: 90%; border-radius: 10px; 
+            /* Se habilita el pellizco solo para la imagen ampliada */
             touch-action: pinch-zoom; 
         }
 
@@ -160,7 +167,7 @@
         </div>
     </header>
 
-    <div id="imgOverlay" onclick="this.style.display='none'"><img id="imgFull"></div>
+    <div id="imgOverlay" onclick="cerrarZoom()"><img id="imgFull"></div>
     <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)" accept="image/*">
 
     <div id="vistaDashboard">
@@ -236,6 +243,22 @@
     </div>
 
     <script>
+        // Funciones de Zoom Específicas para complacer al jefe
+        function abrirZoom(src) {
+            const overlay = document.getElementById('imgOverlay');
+            document.getElementById('imgFull').src = src;
+            overlay.style.display = 'flex';
+            // Permitimos el zoom en el viewport solo mientras la foto está abierta
+            document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
+        }
+
+        function cerrarZoom() {
+            const overlay = document.getElementById('imgOverlay');
+            overlay.style.display = 'none';
+            // Bloqueamos el zoom nuevamente al cerrar la foto
+            document.querySelector('meta[name="viewport"]').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+        }
+
         // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBkP6NALOTSHGd4QVgAxHyeJzCCnOUDY6M",
@@ -248,7 +271,6 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // BASE DE DATOS DE USUARIOS
         const USUARIOS_SISTEMA = {
             "admi@com": { pass: "admigeneral.26", cat: "ADMIN" },
             "solteros@com": { pass: "4532", cat: "SOLTEROS" },
@@ -272,12 +294,10 @@
         let congParaEditar = "";
         let categoriaUsuario = "";
 
-        // LOGIN LOGIC
         function login() {
             const email = document.getElementById('loginEmail').value.toLowerCase();
             const pass = document.getElementById('loginPass').value;
             const error = document.getElementById('loginError');
-
             if (USUARIOS_SISTEMA[email] && USUARIOS_SISTEMA[email].pass === pass) {
                 categoriaUsuario = USUARIOS_SISTEMA[email].cat;
                 localStorage.setItem('fiscalizador_cat', categoriaUsuario);
@@ -288,10 +308,7 @@
             }
         }
 
-        function logout() {
-            localStorage.clear();
-            location.reload();
-        }
+        function logout() { localStorage.clear(); location.reload(); }
 
         function mostrarSistema() {
             document.getElementById('vistaLogin').style.display = 'none';
@@ -342,13 +359,8 @@
             db.collection("curriculums").onSnapshot(snap => {
                 let todos = [];
                 snap.forEach(doc => todos.push({ id: doc.id, ...doc.data() }));
-                
-                if (categoriaUsuario === "ADMIN") {
-                    miembros = todos;
-                } else {
-                    miembros = todos.filter(m => m.fisc === categoriaUsuario);
-                }
-
+                if (categoriaUsuario === "ADMIN") { miembros = todos; } 
+                else { miembros = todos.filter(m => m.fisc === categoriaUsuario); }
                 if(nivel === "ciudades") renderCiudades();
                 else if(nivel === "congs") verCongs(ciuSel);
                 else if(nivel === "miembros") verMiembros(ciuSel, congSelGlobal);
@@ -361,7 +373,6 @@
             document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
             const ciudadesUnicas = [...new Set(miembros.map(m => m.ciudad.trim().toUpperCase()))];
-            
             ciudadesUnicas.forEach(cU => {
                 const p = miembros.find(m => m.ciudad.trim().toUpperCase() === cU);
                 const nombreReal = p.ciudad;
@@ -427,7 +438,7 @@
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-banner">
-                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="document.getElementById('imgFull').src=this.src; document.getElementById('imgOverlay').style.display='flex'">
+                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoom(this.src)">
                     <div class="cv-name">${m.nombre}</div>
                     <div class="cv-sub">📍 ${m.ciudad} | ⛪ ${m.cong}</div>
                 </div>
