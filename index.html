@@ -236,7 +236,7 @@
             const congs = [...new Set(miembros.filter(m => m.ciudad === c).map(m => m.cong))];
             congs.forEach(co => {
                 const p = miembros.find(m => m.ciudad === c && m.cong === co && m.fotoCong);
-                const img = p ? p.fotoCong : "https://via.placeholder.com/100?text=⛪";
+                const img = p ? p.fotoCong : "https://via.placeholder.com/100?text=;
                 grid.innerHTML += `<div class="card-folder">
                     <div class="btn-edit-photo" onclick="event.stopPropagation(); prepararFotoCong('${co}')">✏️</div>
                     <div onclick="verMiembros('${c}','${co}')"><img src="${img}" class="folder-img"><h3>${co}</h3></div>
