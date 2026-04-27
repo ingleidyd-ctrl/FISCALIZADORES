@@ -2,7 +2,7 @@
 <html lang="es">
 <head> 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>FISCALIZADORES</title>
     
     <link rel="icon" type="image/png" href="logo.png">
@@ -27,8 +27,22 @@
             --texto-sec: #64748b; --accent: #0284c7; --borde: #e2e8f0;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
-        body { background-color: var(--bg); color: var(--texto); line-height: 1.6; }
+        * { 
+            margin: 0; padding: 0; box-sizing: border-box; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            transition: 0.3s;
+            /* Evita que se resalte el texto al tocar en móviles */
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body { 
+            background-color: var(--bg); color: var(--texto); line-height: 1.6; 
+            overflow-x: hidden; /* Evita desplazamiento lateral */
+            width: 100%;
+        }
+
+        /* Ajuste para que los inputs no disparen el zoom de iOS */
+        input, select, textarea { font-size: 16px !important; }
 
         header { 
             background: var(--card); 
@@ -41,22 +55,9 @@
             top: 0; 
             z-index: 1000; 
         }
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-        }
-        .app-logo {
-            height: 45px;
-            width: auto;
-            border-radius: 8px;
-        }
-        .logo-text {
-            font-weight: 800;
-            font-size: 1.2rem;
-            letter-spacing: -0.5px;
-        }
+        .logo-container { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .app-logo { height: 45px; width: auto; border-radius: 8px; }
+        .logo-text { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.5px; }
 
         .theme-toggle { background: var(--bg); border: 1px solid var(--borde); color: var(--texto); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600; }
 
@@ -68,7 +69,13 @@
         .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; }
         .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
         
-        .btn-edit-photo { position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--card); cursor: pointer; z-index: 50; }
+        .btn-edit-photo { 
+            position: absolute; top: 10px; right: 10px; 
+            background: var(--accent); color: white; 
+            width: 35px; height: 35px; border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            border: 3px solid var(--card); cursor: pointer; z-index: 100; 
+        }
 
         .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); margin-bottom: 50px; }
         .cv-banner { background: #000; padding: 40px 20px; text-align: center; color: white; position: relative; }
@@ -94,7 +101,11 @@
         #imgOverlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); display: none; justify-content: center; align-items: center; z-index: 2000; }
         #imgOverlay img { max-width: 90%; max-height: 90%; border-radius: 10px; }
 
-        @media (max-width: 768px) { .cv-content { grid-template-columns: 1fr; } .form-grid { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { 
+            .cv-content { grid-template-columns: 1fr; } 
+            .form-grid { grid-template-columns: 1fr; } 
+            .grid-main { padding: 20px; }
+        }
         #vistaDashboard, #vistaCV, #vistaEditor { display: none; }
     </style>
 </head>
@@ -107,7 +118,8 @@
     </script>
 
     <div id="imgOverlay" onclick="this.style.display='none'"><img id="imgFull"></div>
-    <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)">
+    
+    <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)" accept="image/*">
 
     <header>
         <div class="logo-container" onclick="location.reload()">
@@ -120,7 +132,7 @@
     <div id="vistaDashboard">
         <div style="padding: 20px 40px; display: flex; gap: 15px;">
             <input type="text" id="busqueda" placeholder="Buscar por nombre, ciudad o congregación..." style="flex:1" onkeyup="buscador()">
-            <button class="btn-primary" onclick="abrirEditor()">+ NUEVO REGISTRO</button>
+            <button class="btn-primary" onclick="abrirEditor()">+ NUEVO</button>
         </div>
         <div style="padding: 0 40px;">
             <button id="btnBack" class="btn-outline" onclick="volverAtras()" style="display:none; margin-bottom: 20px;">← VOLVER</button>
@@ -139,7 +151,7 @@
             <h2 style="margin-bottom: 25px;">Modificar Registro</h2>
             <div style="text-align: center; margin-bottom: 30px;">
                 <img id="prevFoto" src="https://via.placeholder.com/120" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border: 3px solid var(--accent);">
-                <input type="file" id="fileIn" onchange="subirFoto(this)" style="display:none">
+                <input type="file" id="fileIn" onchange="subirFoto(this)" style="display:none" accept="image/*">
                 <button class="btn-outline" style="display:block; margin: 15px auto;" onclick="document.getElementById('fileIn').click()">Cambiar Foto de Perfil</button>
             </div>
             <div class="form-grid">
@@ -246,13 +258,17 @@
                 const p = miembros.find(m => m.ciudad === c && m.cong === co && m.fotoCong);
                 const img = p ? p.fotoCong : "https://via.placeholder.com/100?text=⛪";
                 grid.innerHTML += `<div class="card-folder">
-                    <div class="btn-edit-photo" onclick="event.stopPropagation(); prepararFotoCong('${co}')">✏️</div>
+                    <div class="btn-edit-photo" onclick="prepararFotoCong(event, '${co}')">✏️</div>
                     <div onclick="verMiembros('${c}','${co}')"><img src="${img}" class="folder-img"><h3>${co}</h3></div>
                 </div>`;
             });
         }
 
-        function prepararFotoCong(cong) { congParaEditar = cong; document.getElementById('fileCong').click(); }
+        function prepararFotoCong(event, cong) { 
+            event.stopPropagation(); // Evita entrar a la congregación
+            congParaEditar = cong; 
+            document.getElementById('fileCong').click(); 
+        }
         
         async function procesarFotoCong(input) {
             if (input.files && input.files[0]) {
@@ -296,7 +312,7 @@
                 <div class="cv-content">
                     <div class="cv-left">
                         <span class="section-label">Contacto y Datos</span>
-                        <div class="info-group"><span class="info-label">📱 Número de Teléfono</span><span class="info-value">${m.tel || '---'}</span></div>
+                        <div class="info-group"><span class="info-label">📱 Teléfono</span><span class="info-value">${m.tel || '---'}</span></div>
                         <div class="info-group"><span class="info-label">🆔 Documento</span><span class="info-value">${m.doc || '---'}</span></div>
                         <div class="info-group"><span class="info-label">🎂 Edad</span><span class="info-value">${edadAuto} años</span></div>
                         <div class="info-group"><span class="info-label">💠 Estado Civil</span><span class="info-value">${m.estCiv || '---'}</span></div>
@@ -304,8 +320,8 @@
                     <div class="cv-right">
                         <span class="section-label">Información Espiritual</span>
                         <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:30px;">
-                            <div class="info-group"><span class="info-label">▶ Ocupación Espiritual</span><span class="info-value">${m.ocuEsp || '---'}</span></div>
-                            <div class="info-group"><span class="info-label">▶ Ocupación Material</span><span class="info-value">${m.ocuMat || '---'}</span></div>
+                            <div class="info-group"><span class="info-label">▶ Ocupación Esp.</span><span class="info-value">${m.ocuEsp || '---'}</span></div>
+                            <div class="info-group"><span class="info-label">▶ Ocupación Mat.</span><span class="info-value">${m.ocuMat || '---'}</span></div>
                             <div class="info-group"><span class="info-label">▶ Perseverancia</span><span class="info-value">${m.anos || '0'} años</span></div>
                             <div class="info-group"><span class="info-label">▶ Estado Actual</span><span class="info-value">${m.estAct || '---'}</span></div>
                         </div>
@@ -381,7 +397,6 @@
                 return;
             }
 
-            // Si hay texto, buscamos en toda la base de datos de miembros
             grid.innerHTML = "";
             const resultados = miembros.filter(m => 
                 m.nombre.toLowerCase().includes(texto) || 
