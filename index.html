@@ -39,6 +39,8 @@
             overflow-x: hidden; width: 100%; position: relative;
         }
 
+        .flag-img { width: 60px; height: auto; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
+
         #vistaLogin {
             height: 100vh; display: flex; align-items: center; justify-content: center;
             background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px;
@@ -92,7 +94,6 @@
 
         .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); margin-bottom: 50px; }
         .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; position: relative; }
-        
         .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: zoom-in; }
 
         .cv-name { font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
@@ -108,9 +109,6 @@
         .info-value { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
         .historial-box { white-space: pre-line; color: var(--texto-sec); font-size: 1rem; margin-bottom: 30px; }
 
-        .editor-box { max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--borde); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        
         #imgOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.9); display: none; justify-content: center; 
@@ -120,9 +118,7 @@
 
         @media (max-width: 768px) { 
             .cv-content { grid-template-columns: 1fr; } 
-            .form-grid { grid-template-columns: 1fr; } 
             .grid-main { padding: 20px; }
-            header { padding: 0.8rem 1rem; }
         }
         #mainHeader, #vistaDashboard, #vistaCV, #vistaEditor { display: none; }
     </style>
@@ -136,7 +132,7 @@
             <p style="color: var(--texto-sec); margin-bottom: 25px; font-size: 0.9rem;">Acceso restringido</p>
             <div style="text-align: left; margin-bottom: 15px;">
                 <label class="info-label">Email de acceso</label>
-                <input type="email" id="loginEmail" placeholder="usuario@sistema.com" inputmode="email">
+                <input type="email" id="loginEmail" placeholder="usuario@sistema.com">
             </div>
             <div style="text-align: left; margin-bottom: 25px;">
                 <label class="info-label">Contraseña</label>
@@ -164,7 +160,7 @@
 
     <div id="vistaDashboard">
         <div style="padding: 20px 40px; display: flex; gap: 15px;">
-            <input type="text" id="busqueda" placeholder="Buscar ciudad, congregación..." style="flex:1" onkeyup="buscador()">
+            <input type="text" id="busqueda" placeholder="Buscar..." style="flex:1" onkeyup="buscador()">
             <button class="btn-primary" onclick="abrirEditor()">+ NUEVO</button>
         </div>
         <div style="padding: 0 40px;">
@@ -180,14 +176,14 @@
     </div>
 
     <div id="vistaEditor">
-        <div class="editor-box">
+        <div class="editor-box" style="max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--borde);">
             <h2 id="tituloEditor" style="margin-bottom: 25px;">Registro de Datos</h2>
             <div style="text-align: center; margin-bottom: 30px;">
                 <img id="prevFoto" src="https://via.placeholder.com/120" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border: 3px solid var(--accent);">
                 <input type="file" id="fileIn" onchange="subirFoto(this)" style="display:none" accept="image/*">
                 <button class="btn-outline" style="display:block; margin: 15px auto;" onclick="document.getElementById('fileIn').click()">Cambiar Foto de Perfil</button>
             </div>
-            <div class="form-grid">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                 <div><label class="info-label">Nombre Completo</label><input type="text" id="inNom"></div>
                 <div><label class="info-label">Fecha de Nacimiento</label><input type="date" id="inFechaNac"></div>
                 <div>
@@ -205,7 +201,7 @@
                         <option value="" disabled selected>Primero elija país</option>
                     </select>
                 </div>
-                <div><label class="info-label">WhatsApp</label><input type="text" id="inTel" inputmode="tel"></div>
+                <div><label class="info-label">WhatsApp</label><input type="text" id="inTel"></div>
                 <div><label class="info-label">Documento</label><input type="text" id="inDoc"></div>
                 <div><label class="info-label">Estado Civil</label><input type="text" id="inEstCiv"></div>
                 <div><label class="info-label">Congregación</label><input type="text" id="inCong"></div>
@@ -230,7 +226,7 @@
                     <button class="btn-primary" style="flex:2" onclick="guardar()">GUARDAR CAMBIOS</button>
                     <button class="btn-outline" style="flex:1" onclick="irDashboard()">CANCELAR</button>
                 </div>
-                <button id="btnEliminar" class="btn-danger" style="display:none;" onclick="eliminarRegistro()">🗑️ ELIMINAR FISCALIZADOR</button>
+                <button id="btnEliminar" class="btn-danger" style="display:none;" onclick="eliminarRegistro()">🗑️ ELIMINAR</button>
             </div>
         </div>
     </div>
@@ -262,27 +258,33 @@
             "🇧🇷": ["Acre", "Alagoas", "Amapá", "Amazonas", "Bahia", "Ceará", "Distrito Federal", "Espírito Santo", "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Pará", "Paraíba", "Paraná", "Pernambuco", "Piauí", "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondônia", "Roraima", "Santa Catarina", "São Paulo", "Sergipe", "Tocantins"]
         };
 
+        const flags = { "🇦🇷": "ar", "🇵🇾": "py", "🇧🇷": "br" };
+
         let miembros = [];
         let fotoURL = "";
         let idEdit = null;
         let nivel = "ciudades";
         let ciuSel = "";
-        let nacSel = ""; // NUEVO: Para guardar el pais de la ciudad seleccionada
+        let nacSel = "";
         let congSelGlobal = "";
         let congParaEditar = "";
         let categoriaUsuario = "";
 
+        function getFlagImg(emoji) {
+            const code = flags[emoji] || "un";
+            return `<img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp">`;
+        }
+
         function login() {
             const email = document.getElementById('loginEmail').value.toLowerCase().trim();
             const pass = document.getElementById('loginPass').value.trim();
-            const error = document.getElementById('loginError');
             if (USUARIOS_SISTEMA[email] && USUARIOS_SISTEMA[email].pass === pass) {
                 categoriaUsuario = USUARIOS_SISTEMA[email].cat;
                 localStorage.setItem('fiscalizador_cat', categoriaUsuario);
                 localStorage.setItem('fiscalizador_session', 'active');
                 mostrarSistema();
             } else {
-                error.innerText = "Credenciales incorrectas.";
+                document.getElementById('loginError').innerText = "Credenciales incorrectas.";
             }
         }
 
@@ -293,6 +295,13 @@
             document.getElementById('mainHeader').style.display = 'flex';
             document.getElementById('userBadge').innerText = categoriaUsuario;
             irDashboard();
+        }
+
+        function toggleTheme() {
+            const b = document.documentElement;
+            const t = b.getAttribute("data-theme") === "light" ? "dark" : "light";
+            b.setAttribute("data-theme", t);
+            document.getElementById('themeBtn').innerText = t === "light" ? "☀️" : "🌙";
         }
 
         function actualizarProvinciasEditor(callback) {
@@ -307,23 +316,6 @@
                 });
             }
             if(callback) callback();
-        }
-
-        function calcularEdad(fecha) {
-            if(!fecha) return "---";
-            const hoy = new Date();
-            const cumple = new Date(fecha);
-            let edad = hoy.getFullYear() - cumple.getFullYear();
-            const m = hoy.getMonth() - cumple.getMonth();
-            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) { edad--; }
-            return edad;
-        }
-
-        function toggleTheme() {
-            const b = document.documentElement;
-            const t = b.getAttribute("data-theme") === "light" ? "dark" : "light";
-            b.setAttribute("data-theme", t);
-            document.getElementById('themeBtn').innerText = t === "light" ? "☀️" : "🌙";
         }
 
         function irDashboard() { 
@@ -349,22 +341,20 @@
             document.getElementById('btnBack').style.display = 'none';
             document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            
-            // Agrupamos por Ciudad + Nacionalidad para que no se mezclen los "Misiones"
             const combinaciones = [...new Set(miembros.map(m => JSON.stringify({c: m.ciudad.trim(), n: m.nacionalidad})))].map(s => JSON.parse(s));
-            
             combinaciones.sort((a,b) => a.c.localeCompare(b.c)).forEach(comb => {
-                let ico = (comb.n && comb.n !== "undefined") ? comb.n : "📍";
-                grid.innerHTML += `<div class="card-folder" onclick="verCongs('${comb.c}', '${comb.n}')"><span style="font-size:3rem;">${ico}</span><h3 style="margin-top:10px;">${comb.c}</h3></div>`;
+                grid.innerHTML += `<div class="card-folder" onclick="verCongs('${comb.c}', '${comb.n}')">
+                    <div style="margin-bottom:15px;">${getFlagImg(comb.n)}</div>
+                    <h3 style="margin-top:5px;">${comb.c}</h3>
+                </div>`;
             });
         }
 
         function verCongs(c, n) {
             nivel = "congs"; ciuSel = c; nacSel = n; 
             document.getElementById('btnBack').style.display = 'inline-block';
-            document.getElementById('tituloTxt').innerText = `Congregaciones en ${c} ${n || ''}`;
+            document.getElementById('tituloTxt').innerText = `Congregaciones en ${c}`;
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            
             const congs = [...new Set(miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n).map(m => m.cong))];
             congs.forEach(co => {
                 const p = miembros.find(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co && m.fotoCong);
@@ -412,7 +402,6 @@
 
         function verCV(id) {
             const m = miembros.find(x => x.id === id);
-            const edadAuto = calcularEdad(m.fechaNac);
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvContent').innerHTML = `
@@ -424,25 +413,22 @@
                 <div class="cv-content">
                     <div class="cv-left">
                         <span class="section-label">Contacto y Datos</span>
-                        <div class="info-group"><span class="info-label">📱 Teléfono</span><span class="info-value">${m.tel || '---'}</span></div>
+                        <div class="info-group"><span class="info-label">📱 WhatsApp</span><span class="info-value">${m.tel || '---'}</span></div>
                         <div class="info-group"><span class="info-label">🆔 Documento</span><span class="info-value">${m.doc || '---'}</span></div>
-                        <div class="info-group"><span class="info-label">🎂 Edad</span><span class="info-value">${edadAuto} años</span></div>
                         <div class="info-group"><span class="info-label">💠 Estado Civil</span><span class="info-value">${m.estCiv || '---'}</span></div>
                     </div>
                     <div class="cv-right">
-                        <span class="section-label">Información Espiritual</span>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:30px;">
+                        <span class="section-label">Información</span>
+                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
                             <div class="info-group"><span class="info-label">▶ Ocupación Esp.</span><span class="info-value">${m.ocuEsp || '---'}</span></div>
                             <div class="info-group"><span class="info-label">▶ Ocupación Mat.</span><span class="info-value">${m.ocuMat || '---'}</span></div>
-                            <div class="info-group"><span class="info-label">▶ Perseverancia</span><span class="info-value">${m.anos || '0'} años</span></div>
-                            <div class="info-group"><span class="info-label">▶ Estado Actual</span><span class="info-value">${m.estAct || '---'}</span></div>
                         </div>
                         <div class="info-group" style="background:rgba(56,189,248,0.1); padding:15px; border-radius:10px;">
                             <span class="info-label">📋 Fiscalizador de:</span><span class="info-value">${m.fisc || '---'}</span>
                         </div>
-                        <span class="section-label" style="margin-top:30px;">Historial de Vida</span>
-                        <div class="historial-box">${m.hist || 'Sin historial registrado.'}</div>
-                        <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="abrirEditor('${m.id}')">MODIFICAR REGISTRO</button>
+                        <span class="section-label" style="margin-top:20px;">Historial</span>
+                        <div class="historial-box">${m.hist || 'Sin historial.'}</div>
+                        <button class="btn-primary" style="width:100%;" onclick="abrirEditor('${m.id}')">EDITAR REGISTRO</button>
                     </div>
                 </div>`;
         }
@@ -458,12 +444,11 @@
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'none'; 
             document.getElementById('vistaEditor').style.display = 'block';
-            
             const btnEliminar = document.getElementById('btnEliminar');
 
             if(id) {
                 const m = miembros.find(x => x.id === id);
-                document.getElementById('tituloEditor').innerText = "Editar Fiscalizador";
+                document.getElementById('tituloEditor').innerText = "Editar Registro";
                 btnEliminar.style.display = "block";
                 document.getElementById('inNom').value = m.nombre; 
                 document.getElementById('inFechaNac').value = m.fechaNac || "";
@@ -488,13 +473,6 @@
                 document.getElementById('inFisc').value = (categoriaUsuario === "ADMIN") ? "SOLTEROS" : categoriaUsuario;
                 document.getElementById('prevFoto').src = "https://via.placeholder.com/120";
                 fotoURL = "";
-            }
-        }
-
-        async function eliminarRegistro() {
-            if(confirm("¿Estás seguro de que deseas eliminar permanentemente a este fiscalizador? Esta acción no se puede deshacer.")) {
-                await db.collection("curriculums").doc(idEdit).delete();
-                irDashboard();
             }
         }
 
@@ -524,40 +502,30 @@
                 hist: document.getElementById('inHist').value,
                 foto: fotoURL
             };
-            if(!d.ciudad || !d.nacionalidad) { alert("Seleccione País y Ciudad"); return; }
+            if(!d.ciudad || !d.nacionalidad || !d.nombre) { alert("Complete los datos principales"); return; }
             if(idEdit) await db.collection("curriculums").doc(idEdit).update(d);
             else await db.collection("curriculums").add(d);
             irDashboard();
         }
 
-        function buscador() {
-            const texto = document.getElementById('busqueda').value.toLowerCase().trim();
-            const grid = document.getElementById('gridMain');
-            if (texto === "") {
-                if (nivel === "ciudades") renderCiudades();
-                else if (nivel === "congs") verCongs(ciuSel, nacSel);
-                else if (nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
-                return;
+        async function eliminarRegistro() {
+            if(confirm("¿Eliminar permanentemente?")) {
+                await db.collection("curriculums").doc(idEdit).delete();
+                irDashboard();
             }
+        }
+
+        function buscador() {
+            const texto = document.getElementById('busqueda').value.toLowerCase();
+            const grid = document.getElementById('gridMain');
+            if (texto === "") { escuchar(); return; }
             grid.innerHTML = "";
-            const ciudadesCoincidentes = {};
-            miembros.forEach(m => {
-                if (m.ciudad.toLowerCase().includes(texto)) {
-                    const llave = (m.ciudad + m.nacionalidad).toLowerCase().trim();
-                    if (!ciudadesCoincidentes[llave]) { ciudadesCoincidentes[llave] = { nombre: m.ciudad, nac: m.nacionalidad }; }
-                }
-            });
-            Object.values(ciudadesCoincidentes).forEach(c => {
-                let ico = (c.nac && c.nac !== "undefined") ? c.nac : "📍";
-                grid.innerHTML += `<div class="card-folder" onclick="verCongs('${c.nombre}', '${c.nac}')"><span style="font-size:2rem;">${ico}</span><h3>${c.nombre}</h3><p style="font-size:0.7rem; color:var(--accent)">CIUDAD</p></div>`;
-            });
-            const congsEncontradas = [...new Set(miembros.filter(m => m.cong.toLowerCase().includes(texto)).map(m => JSON.stringify({nombre: m.cong, ciudad: m.ciudad, nac: m.nacionalidad})))].map(s => JSON.parse(s));
-            congsEncontradas.forEach(c => {
-                const p = miembros.find(m => m.ciudad === c.ciudad && m.nacionalidad === c.nac && m.cong === c.nombre && m.fotoCong);
-                grid.innerHTML += `<div class="card-folder" onclick="verMiembros('${c.ciudad}','${c.nac}','${c.nombre}')"><img src="${p?p.fotoCong:'https://via.placeholder.com/100?text=⛪'}" class="folder-img" style="width:60px; height:60px;"><h3>${c.nombre}</h3><p style="font-size:0.7rem; color:var(--accent)">CONGREGACIÓN</p></div>`;
-            });
-            miembros.filter(m => m.nombre.toLowerCase().includes(texto)).forEach(m => {
-                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')"><img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);"><h3>${m.nombre}</h3><p style="font-size:0.8rem; color:var(--accent)">PERSONA</p></div>`;
+            miembros.filter(m => m.nombre.toLowerCase().includes(texto) || m.ciudad.toLowerCase().includes(texto) || m.cong.toLowerCase().includes(texto)).forEach(m => {
+                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <h3>${m.nombre}</h3>
+                    <p style="font-size:0.7rem; color:var(--accent)">${m.ciudad}</p>
+                </div>`;
             });
         }
 
