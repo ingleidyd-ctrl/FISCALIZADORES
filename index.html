@@ -406,7 +406,7 @@
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-banner">
-                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoomFoto(this.src)">
+                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" id="fotoZoomTarget">
                     <div class="cv-name">${m.nombre}</div>
                     <div class="cv-sub">📍 ${m.ciudad} ${m.nacionalidad || ''} | ⛪ ${m.cong}</div>
                 </div>
@@ -431,6 +431,11 @@
                         <button class="btn-primary" style="width:100%;" onclick="abrirEditor('${m.id}')">EDITAR REGISTRO</button>
                     </div>
                 </div>`;
+            
+            // Re-asignar el evento de clic a la foto recién creada
+            document.getElementById('fotoZoomTarget').onclick = function() {
+                abrirZoomFoto(this.src);
+            };
         }
 
         function abrirZoomFoto(src) {
@@ -519,7 +524,6 @@
             const texto = document.getElementById('busqueda').value.toLowerCase().trim();
             const grid = document.getElementById('gridMain');
             
-            // Si el buscador está vacío, mostramos la vista normal (Ciudades)
             if (texto === "") {
                 if (nivel === "ciudades") renderCiudades();
                 else if (nivel === "congs") verCongs(ciuSel, nacSel);
@@ -527,7 +531,6 @@
                 return;
             }
 
-            // Si hay texto, limpiamos el grid y filtramos todo
             grid.innerHTML = "";
             document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
