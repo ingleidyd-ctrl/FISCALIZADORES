@@ -29,9 +29,8 @@
         * { 
             margin: 0; padding: 0; box-sizing: border-box; 
             font-family: 'Plus Jakarta Sans', sans-serif; 
-            transition: 0.3s;
+            transition: background 0.3s, color 0.3s;
             -webkit-tap-highlight-color: transparent;
-            touch-action: manipulation;
         }
 
         body { 
@@ -78,8 +77,7 @@
         .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; user-select: none; }
         .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; user-select: none; }
         .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
-        .btn-primary:active, .btn-outline:active, .btn-danger:active { transform: scale(0.95); }
-
+        
         .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px 40px; }
         .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; user-select: none; }
         .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
@@ -109,12 +107,26 @@
         .info-value { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
         .historial-box { white-space: pre-line; color: var(--texto-sec); font-size: 1rem; margin-bottom: 30px; }
 
+        /* --- ESTILOS DEL ZOOM MEJORADO --- */
         #imgOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.9); display: none; justify-content: center; 
-            align-items: center; z-index: 2000; cursor: zoom-out;
+            background: rgba(0,0,0,0.95); display: none; justify-content: center; 
+            align-items: center; z-index: 9999; overflow: hidden;
+            touch-action: none; /* Previene scroll del body mientras haces zoom */
         }
-        #imgOverlay img { max-width: 95%; max-height: 95%; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        #imgContainer {
+            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
+        }
+        #imgFull { 
+            max-width: 90%; max-height: 90%; border-radius: 8px; 
+            transform-origin: center; cursor: grab;
+            transition: transform 0.1s ease-out;
+        }
+        .close-zoom {
+            position: absolute; top: 20px; right: 20px; background: white; color: black;
+            width: 40px; height: 40px; border-radius: 50%; display: flex; 
+            justify-content: center; align-items: center; font-weight: bold; cursor: pointer; z-index: 10000;
+        }
 
         @media (max-width: 768px) { 
             .cv-content { grid-template-columns: 1fr; } 
@@ -155,7 +167,13 @@
         </div>
     </header>
 
-    <div id="imgOverlay" onclick="this.style.display='none'"><img id="imgFull"></div>
+    <div id="imgOverlay">
+        <div class="close-zoom" onclick="cerrarZoom()">X</div>
+        <div id="imgContainer">
+            <img id="imgFull" src="" alt="Zoom">
+        </div>
+    </div>
+
     <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)" accept="image/*">
 
     <div id="vistaDashboard">
@@ -252,13 +270,12 @@
             "dacyp@com": { pass: "1630", cat: "DACYP" }
         };
 
+        const flags = { "🇦🇷": "ar", "🇵🇾": "py", "🇧🇷": "br" };
         const ubicaciones = {
             "🇦🇷": ["Buenos Aires", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"],
             "🇵🇾": ["Asunción", "Concepción", "San Pedro", "Cordillera", "Guairá", "Caaguazú", "Caazapá", "Itapúa", "Misiones", "Paraguarí", "Alto Paraná", "Central", "Ñeembucú", "Amambay", "Canindeyú", "Presidente Hayes", "Boquerón", "Alto Paraguay"],
             "🇧🇷": ["Acre", "Alagoas", "Amapá", "Amazonas", "Bahia", "Ceará", "Distrito Federal", "Espírito Santo", "Goiás", "Maranhão", "Mato Grosso", "Mato Grosso do Sul", "Minas Gerais", "Pará", "Paraíba", "Paraná", "Pernambuco", "Piauí", "Rio de Janeiro", "Rio Grande do Norte", "Rio Grande do Sul", "Rondônia", "Roraima", "Santa Catarina", "São Paulo", "Sergipe", "Tocantins"]
         };
-
-        const flags = { "🇦🇷": "ar", "🇵🇾": "py", "🇧🇷": "br" };
 
         let miembros = [];
         let fotoURL = "";
@@ -267,9 +284,78 @@
         let ciuSel = "";
         let nacSel = "";
         let congSelGlobal = "";
-        let congParaEditar = "";
         let categoriaUsuario = "";
 
+        // --- LÓGICA DE ZOOM INTERACTIVO ---
+        let scale = 1, panning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 };
+        const imgFull = document.getElementById("imgFull");
+        const imgOverlay = document.getElementById("imgOverlay");
+
+        function setTransform() {
+            imgFull.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
+        }
+
+        imgOverlay.onmousedown = (e) => {
+            e.preventDefault();
+            start = { x: e.clientX - pointX, y: e.clientY - pointY };
+            panning = true;
+            imgFull.style.cursor = "grabbing";
+        };
+        imgOverlay.onmouseup = () => { panning = false; imgFull.style.cursor = "grab"; };
+        imgOverlay.onmousemove = (e) => {
+            if (!panning) return;
+            pointX = (e.clientX - start.x);
+            pointY = (e.clientY - start.y);
+            setTransform();
+        };
+        imgOverlay.onwheel = (e) => {
+            e.preventDefault();
+            let xs = (e.clientX - pointX) / scale, ys = (e.clientY - pointY) / scale;
+            let delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY);
+            (delta > 0) ? (scale *= 1.2) : (scale /= 1.2);
+            pointX = e.clientX - xs * scale;
+            pointY = e.clientY - ys * scale;
+            setTransform();
+        };
+
+        // Soporte para gestos táctiles (Pinza en celular)
+        let initialDist = -1;
+        imgOverlay.ontouchstart = (e) => {
+            if (e.touches.length === 1) {
+                panning = true;
+                start = { x: e.touches[0].clientX - pointX, y: e.touches[0].clientY - pointY };
+            } else if (e.touches.length === 2) {
+                initialDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+            }
+        };
+        imgOverlay.ontouchmove = (e) => {
+            if (e.touches.length === 1 && panning) {
+                pointX = e.touches[0].clientX - start.x;
+                pointY = e.touches[0].clientY - start.y;
+                setTransform();
+            } else if (e.touches.length === 2) {
+                let dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
+                if (initialDist > 0) {
+                    let zoom = dist / initialDist;
+                    scale *= zoom;
+                    initialDist = dist;
+                    setTransform();
+                }
+            }
+        };
+        imgOverlay.ontouchend = () => { panning = false; initialDist = -1; };
+
+        function abrirZoomFoto(src) {
+            if(!src || src.includes('placeholder')) return;
+            imgFull.src = src;
+            scale = 1; pointX = 0; pointY = 0;
+            setTransform();
+            imgOverlay.style.display = 'flex';
+        }
+
+        function cerrarZoom() { imgOverlay.style.display = 'none'; }
+
+        // --- RESTO DE FUNCIONES (Login, Dashboard, etc) ---
         function getFlagImg(emoji) {
             const code = flags[emoji] || "un";
             return `<img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp">`;
@@ -406,7 +492,7 @@
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-banner">
-                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" id="fotoZoomTarget">
+                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoomFoto(this.src)">
                     <div class="cv-name">${m.nombre}</div>
                     <div class="cv-sub">📍 ${m.ciudad} ${m.nacionalidad || ''} | ⛪ ${m.cong}</div>
                 </div>
@@ -431,17 +517,6 @@
                         <button class="btn-primary" style="width:100%;" onclick="abrirEditor('${m.id}')">EDITAR REGISTRO</button>
                     </div>
                 </div>`;
-            
-            // Re-asignar el evento de clic a la foto recién creada
-            document.getElementById('fotoZoomTarget').onclick = function() {
-                abrirZoomFoto(this.src);
-            };
-        }
-
-        function abrirZoomFoto(src) {
-            if(!src || src.includes('placeholder')) return;
-            document.getElementById('imgFull').src = src;
-            document.getElementById('imgOverlay').style.display = 'flex';
         }
 
         function abrirEditor(id = null) {
@@ -523,29 +598,24 @@
         function buscador() {
             const texto = document.getElementById('busqueda').value.toLowerCase().trim();
             const grid = document.getElementById('gridMain');
-            
             if (texto === "") {
                 if (nivel === "ciudades") renderCiudades();
                 else if (nivel === "congs") verCongs(ciuSel, nacSel);
                 else if (nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
                 return;
             }
-
             grid.innerHTML = "";
             document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
-
             const filtrados = miembros.filter(m => 
                 m.nombre.toLowerCase().includes(texto) || 
                 m.ciudad.toLowerCase().includes(texto) || 
                 m.cong.toLowerCase().includes(texto)
             );
-
             if(filtrados.length === 0) {
                 grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-sec); padding: 20px;">No se encontraron resultados.</p>`;
                 return;
             }
-
             filtrados.forEach(m => {
                 grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
                     <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
