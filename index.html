@@ -160,7 +160,7 @@
 
     <div id="vistaDashboard">
         <div style="padding: 20px 40px; display: flex; gap: 15px;">
-            <input type="text" id="busqueda" placeholder="Buscar..." style="flex:1" onkeyup="buscador()">
+            <input type="text" id="busqueda" placeholder="Buscar por Nombre, Ciudad o Congregación..." style="flex:1" onkeyup="buscador()">
             <button class="btn-primary" onclick="abrirEditor()">+ NUEVO</button>
         </div>
         <div style="padding: 0 40px;">
@@ -516,15 +516,39 @@
         }
 
         function buscador() {
-            const texto = document.getElementById('busqueda').value.toLowerCase();
+            const texto = document.getElementById('busqueda').value.toLowerCase().trim();
             const grid = document.getElementById('gridMain');
-            if (texto === "") { escuchar(); return; }
+            
+            // Si el buscador está vacío, mostramos la vista normal (Ciudades)
+            if (texto === "") {
+                if (nivel === "ciudades") renderCiudades();
+                else if (nivel === "congs") verCongs(ciuSel, nacSel);
+                else if (nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
+                return;
+            }
+
+            // Si hay texto, limpiamos el grid y filtramos todo
             grid.innerHTML = "";
-            miembros.filter(m => m.nombre.toLowerCase().includes(texto) || m.ciudad.toLowerCase().includes(texto) || m.cong.toLowerCase().includes(texto)).forEach(m => {
+            document.getElementById('btnBack').style.display = 'inline-block';
+            document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
+
+            const filtrados = miembros.filter(m => 
+                m.nombre.toLowerCase().includes(texto) || 
+                m.ciudad.toLowerCase().includes(texto) || 
+                m.cong.toLowerCase().includes(texto)
+            );
+
+            if(filtrados.length === 0) {
+                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-sec); padding: 20px;">No se encontraron resultados.</p>`;
+                return;
+            }
+
+            filtrados.forEach(m => {
                 grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:60px; height:60px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
-                    <h3>${m.nombre}</h3>
-                    <p style="font-size:0.7rem; color:var(--accent)">${m.ciudad}</p>
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <h3 style="font-size: 1rem;">${m.nombre}</h3>
+                    <p style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">${m.cong}</p>
+                    <p style="font-size: 0.7rem; color: var(--texto-sec);">${m.ciudad} ${m.nacionalidad || ''}</p>
                 </div>`;
             });
         }
