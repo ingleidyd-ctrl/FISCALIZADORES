@@ -53,13 +53,8 @@
 
         input, select, textarea { 
             font-size: 16px !important; 
-            background: var(--card);
-            border: 1px solid var(--borde);
-            color: var(--texto);
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            outline: none;
+            background: var(--card); border: 1px solid var(--borde); color: var(--texto);
+            padding: 12px; border-radius: 10px; width: 100%; outline: none;
         }
         
         input:focus { border-color: var(--accent); }
@@ -78,23 +73,17 @@
         .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; user-select: none; }
         .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; user-select: none; }
         .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
-        .btn-primary:active, .btn-outline:active, .btn-danger:active { transform: scale(0.95); }
 
         .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px 40px; }
-        .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; user-select: none; }
+        .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; }
         .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
         
-        .btn-edit-photo { 
-            position: absolute; top: 10px; right: 10px; 
-            background: var(--accent); color: white; 
-            width: 35px; height: 35px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            border: 3px solid var(--card); cursor: pointer; z-index: 100; 
-        }
-
         .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); margin-bottom: 50px; }
         .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; position: relative; }
-        .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: zoom-in; }
+        
+        /* Estilo importante para la foto del perfil */
+        .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: zoom-in; transition: transform 0.2s; }
+        .cv-photo:hover { transform: scale(1.03); }
 
         .cv-name { font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
         .cv-sub { color: #e0f2fe; font-weight: 600; margin-top: 5px; display: flex; justify-content: center; gap: 10px; align-items: center; }
@@ -109,12 +98,13 @@
         .info-value { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
         .historial-box { white-space: pre-line; color: var(--texto-sec); font-size: 1rem; margin-bottom: 30px; }
 
+        /* Estilos del Overlay (Zoom) */
         #imgOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.9); display: none; justify-content: center; 
             align-items: center; z-index: 2000; cursor: zoom-out;
         }
-        #imgOverlay img { max-width: 95%; max-height: 95%; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
+        #imgOverlay img { max-width: 90%; max-height: 90%; border-radius: 10px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
 
         @media (max-width: 768px) { 
             .cv-content { grid-template-columns: 1fr; } 
@@ -156,6 +146,7 @@
     </header>
 
     <div id="imgOverlay" onclick="this.style.display='none'"><img id="imgFull"></div>
+    
     <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)" accept="image/*">
 
     <div id="vistaDashboard">
@@ -267,12 +258,13 @@
         let ciuSel = "";
         let nacSel = "";
         let congSelGlobal = "";
-        let congParaEditar = "";
         let categoriaUsuario = "";
 
-        function getFlagImg(emoji) {
-            const code = flags[emoji] || "un";
-            return `<img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp">`;
+        // --- Lógica de Zoom ---
+        function abrirZoom(src) {
+            if(!src || src.includes('placeholder')) return;
+            document.getElementById('imgFull').src = src;
+            document.getElementById('imgOverlay').style.display = 'flex';
         }
 
         function login() {
@@ -304,20 +296,6 @@
             document.getElementById('themeBtn').innerText = t === "light" ? "☀️" : "🌙";
         }
 
-        function actualizarProvinciasEditor(callback) {
-            const pais = document.getElementById("inNacIo").value;
-            const ciuSelect = document.getElementById("inCiu");
-            ciuSelect.innerHTML = '<option value="" disabled selected>Seleccione ubicación</option>';
-            if(ubicaciones[pais]) {
-                ubicaciones[pais].forEach(c => {
-                    const opt = document.createElement("option");
-                    opt.value = c; opt.textContent = c;
-                    ciuSelect.appendChild(opt);
-                });
-            }
-            if(callback) callback();
-        }
-
         function irDashboard() { 
             document.getElementById('vistaDashboard').style.display = 'block'; 
             document.getElementById('vistaCV').style.display = 'none'; 
@@ -334,6 +312,11 @@
                 else if(nivel === "congs") verCongs(ciuSel, nacSel);
                 else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
             });
+        }
+
+        function getFlagImg(emoji) {
+            const code = flags[emoji] || "un";
+            return `<img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp">`;
         }
 
         function renderCiudades() {
@@ -400,13 +383,14 @@
 
         function volverAtras() { if(nivel === "miembros") verCongs(ciuSel, nacSel); else renderCiudades(); }
 
+        // --- Vista del CV con el onclick del Zoom ---
         function verCV(id) {
             const m = miembros.find(x => x.id === id);
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-banner">
-                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoomFoto(this.src)">
+                    <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoom(this.src)">
                     <div class="cv-name">${m.nombre}</div>
                     <div class="cv-sub">📍 ${m.ciudad} ${m.nacionalidad || ''} | ⛪ ${m.cong}</div>
                 </div>
@@ -431,12 +415,6 @@
                         <button class="btn-primary" style="width:100%;" onclick="abrirEditor('${m.id}')">EDITAR REGISTRO</button>
                     </div>
                 </div>`;
-        }
-
-        function abrirZoomFoto(src) {
-            if(!src || src.includes('placeholder')) return;
-            document.getElementById('imgFull').src = src;
-            document.getElementById('imgOverlay').style.display = 'flex';
         }
 
         function abrirEditor(id = null) {
@@ -474,6 +452,20 @@
                 document.getElementById('prevFoto').src = "https://via.placeholder.com/120";
                 fotoURL = "";
             }
+        }
+
+        function actualizarProvinciasEditor(callback) {
+            const pais = document.getElementById("inNacIo").value;
+            const ciuSelect = document.getElementById("inCiu");
+            ciuSelect.innerHTML = '<option value="" disabled selected>Seleccione ubicación</option>';
+            if(ubicaciones[pais]) {
+                ubicaciones[pais].forEach(c => {
+                    const opt = document.createElement("option");
+                    opt.value = c; opt.textContent = c;
+                    ciuSelect.appendChild(opt);
+                });
+            }
+            if(callback) callback();
         }
 
         function subirFoto(input) {
@@ -519,7 +511,6 @@
             const texto = document.getElementById('busqueda').value.toLowerCase().trim();
             const grid = document.getElementById('gridMain');
             
-            // Si el buscador está vacío, mostramos la vista normal (Ciudades)
             if (texto === "") {
                 if (nivel === "ciudades") renderCiudades();
                 else if (nivel === "congs") verCongs(ciuSel, nacSel);
@@ -527,7 +518,6 @@
                 return;
             }
 
-            // Si hay texto, limpiamos el grid y filtramos todo
             grid.innerHTML = "";
             document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
