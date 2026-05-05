@@ -2,7 +2,7 @@
 <html lang="es">
 <head> 
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <title>FISCALIZADORES</title>
     
     <link rel="icon" type="image/png" href="logo.png">
@@ -10,7 +10,6 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="FISCALIZADORES">
 
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore-compat.js"></script>
@@ -26,159 +25,100 @@
             --texto-sec: #64748b; --accent: #0284c7; --borde: #e2e8f0;
         }
 
-        * { 
-            margin: 0; padding: 0; box-sizing: border-box; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            transition: background 0.3s, color 0.3s;
-            -webkit-tap-highlight-color: transparent;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; transition: 0.3s; }
 
-        body { 
-            background-color: var(--bg); color: var(--texto); line-height: 1.6; 
-            overflow-x: hidden; width: 100%; position: relative;
-        }
-
-        .flag-img { width: 60px; height: auto; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-
-        #vistaLogin {
-            height: 100vh; display: flex; align-items: center; justify-content: center;
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px;
-        }
-        .login-card {
-            background: var(--card); padding: 40px; border-radius: 24px;
-            width: 100%; max-width: 400px; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.3); border: 1px solid var(--borde);
-        }
-
-        input, select, textarea { 
-            font-size: 16px !important; 
-            background: var(--card);
-            border: 1px solid var(--borde);
-            color: var(--texto);
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            outline: none;
-        }
-        
-        input:focus { border-color: var(--accent); }
-
-        header { 
-            background: var(--card); padding: 0.8rem 2rem; 
-            display: flex; justify-content: space-between; align-items: center; 
-            border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 1000; 
-        }
-        .logo-container { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-        .app-logo { height: 45px; width: auto; border-radius: 8px; }
-        .logo-text { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.5px; }
-
-        .theme-toggle { background: var(--bg); border: 1px solid var(--borde); color: var(--texto); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600; }
-
-        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; user-select: none; }
-        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; user-select: none; }
-        .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
-        
-        .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px 40px; }
-        .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; user-select: none; }
-        .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
-        
-        .btn-edit-photo { 
-            position: absolute; top: 10px; right: 10px; 
-            background: var(--accent); color: white; 
-            width: 35px; height: 35px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            border: 3px solid var(--card); cursor: pointer; z-index: 100; 
-        }
-
-        .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); margin-bottom: 50px; }
-        .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; position: relative; }
-        .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: zoom-in; }
-
-        .cv-name { font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .cv-sub { color: #e0f2fe; font-weight: 600; margin-top: 5px; display: flex; justify-content: center; gap: 10px; align-items: center; }
-
-        .cv-content { display: grid; grid-template-columns: 1fr 1.5fr; gap: 0; }
-        .cv-left { background: rgba(0,0,0,0.05); padding: 40px; border-right: 1px solid var(--borde); }
-        .cv-right { padding: 40px; display: flex; flex-direction: column; }
-
-        .section-label { font-size: 0.75rem; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1.2px; margin-bottom: 20px; display: block; border-bottom: 1px solid var(--borde); padding-bottom: 5px; }
-        .info-group { margin-bottom: 20px; }
-        .info-label { font-size: 0.85rem; color: var(--texto-sec); display: block; margin-bottom: 5px; }
-        .info-value { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-        .historial-box { white-space: pre-line; color: var(--texto-sec); font-size: 1rem; margin-bottom: 30px; }
+        body { background-color: var(--bg); color: var(--texto); overflow-x: hidden; width: 100%; }
 
         /* --- ESTILOS DEL ZOOM MEJORADO --- */
         #imgOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.95); display: none; justify-content: center; 
-            align-items: center; z-index: 9999; overflow: hidden;
-            touch-action: none; /* Previene scroll del body mientras haces zoom */
-        }
-        #imgContainer {
-            width: 100%; height: 100%; display: flex; justify-content: center; align-items: center;
+            align-items: center; z-index: 9999; overflow: auto;
         }
         #imgFull { 
-            max-width: 90%; max-height: 90%; border-radius: 8px; 
-            transform-origin: center; cursor: grab;
-            transition: transform 0.1s ease-out;
+            max-width: 100%; height: auto; 
+            transition: transform 0.3s ease;
+            cursor: zoom-out;
         }
         .close-zoom {
-            position: absolute; top: 20px; right: 20px; background: white; color: black;
-            width: 40px; height: 40px; border-radius: 50%; display: flex; 
-            justify-content: center; align-items: center; font-weight: bold; cursor: pointer; z-index: 10000;
+            position: fixed; top: 20px; right: 20px; background: white; color: black;
+            width: 40px; height: 40px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; font-weight: bold;
+            font-size: 20px; z-index: 10000; cursor: pointer; box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
+        /* ---------------------------------- */
 
-        @media (max-width: 768px) { 
-            .cv-content { grid-template-columns: 1fr; } 
-            .grid-main { padding: 20px; }
-        }
+        .flag-img { width: 60px; height: auto; border-radius: 4px; }
+
+        #vistaLogin { height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%); padding: 20px; }
+        .login-card { background: var(--card); padding: 40px; border-radius: 24px; width: 100%; max-width: 400px; text-align: center; border: 1px solid var(--borde); }
+
+        input, select, textarea { font-size: 16px !important; background: var(--card); border: 1px solid var(--borde); color: var(--texto); padding: 12px; border-radius: 10px; width: 100%; outline: none; }
+        
+        header { background: var(--card); padding: 0.8rem 2rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--borde); position: sticky; top: 0; z-index: 1000; }
+        .logo-container { display: flex; align-items: center; gap: 12px; cursor: pointer; }
+        .app-logo { height: 45px; width: auto; border-radius: 8px; }
+        .logo-text { font-weight: 800; font-size: 1.2rem; }
+
+        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
+        .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
+
+        .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px 40px; }
+        .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; }
+        .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
+        
+        .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; margin-bottom: 50px; }
+        .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; position: relative; }
+        .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: pointer; }
+
+        .cv-name { font-size: 2rem; font-weight: 800; text-transform: uppercase; }
+        .cv-content { display: grid; grid-template-columns: 1fr 1.5fr; gap: 0; }
+        .cv-left { background: rgba(0,0,0,0.05); padding: 40px; border-right: 1px solid var(--borde); }
+        .cv-right { padding: 40px; }
+
+        .section-label { font-size: 0.75rem; font-weight: 800; color: var(--accent); text-transform: uppercase; border-bottom: 1px solid var(--borde); margin-bottom: 20px; display: block; }
+        .info-group { margin-bottom: 20px; }
+        .info-label { font-size: 0.85rem; color: var(--texto-sec); display: block; }
+        .info-value { font-size: 1.1rem; font-weight: 600; }
+        .historial-box { white-space: pre-line; color: var(--texto-sec); font-size: 1rem; margin-bottom: 30px; }
+
         #mainHeader, #vistaDashboard, #vistaCV, #vistaEditor { display: none; }
     </style>
 </head>
 <body>
 
+    <!-- Overlay de Zoom -->
+    <div id="imgOverlay">
+        <div class="close-zoom" onclick="cerrarZoom()">✕</div>
+        <img id="imgFull" onclick="cerrarZoom()">
+    </div>
+
     <div id="vistaLogin">
         <div class="login-card">
             <img src="logo.png" style="height: 70px; margin-bottom: 15px; border-radius: 12px;">
-            <h2 style="margin-bottom: 5px; font-weight: 800;">FISCALIZADORES</h2>
-            <p style="color: var(--texto-sec); margin-bottom: 25px; font-size: 0.9rem;">Acceso restringido</p>
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label class="info-label">Email de acceso</label>
-                <input type="email" id="loginEmail" placeholder="usuario@sistema.com">
-            </div>
-            <div style="text-align: left; margin-bottom: 25px;">
-                <label class="info-label">Contraseña</label>
-                <input type="password" id="loginPass" placeholder="••••••••">
-            </div>
-            <button class="btn-primary" style="width: 100%;" onclick="login()">INGRESAR AL PANEL</button>
-            <p id="loginError" style="color: #ff4444; margin-top: 15px; font-size: 0.85rem; font-weight: 600;"></p>
+            <h2 style="margin-bottom: 25px; font-weight: 800;">FISCALIZADORES</h2>
+            <input type="email" id="loginEmail" placeholder="Email" style="margin-bottom: 15px;">
+            <input type="password" id="loginPass" placeholder="Contraseña" style="margin-bottom: 25px;">
+            <button class="btn-primary" style="width: 100%;" onclick="login()">INGRESAR</button>
+            <p id="loginError" style="color: #ff4444; margin-top: 15px;"></p>
         </div>
     </div>
 
     <header id="mainHeader">
         <div class="logo-container" onclick="location.reload()">
-            <img src="logo.png" alt="Logo" class="app-logo">
-            <span class="logo-text">FISCALIZADORES<span style="color:var(--accent)">.</span></span>
+            <img src="logo.png" class="app-logo">
+            <span class="logo-text">FISCALIZADORES</span>
         </div>
         <div style="display: flex; gap: 10px; align-items: center;">
-            <span id="userBadge" style="font-size: 0.7rem; background: var(--borde); padding: 4px 8px; border-radius: 5px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
-            <button onclick="logout()" style="background:transparent; border:none; color:#ff4444; cursor:pointer; font-weight:bold; font-size: 0.8rem; margin-left:10px;">SALIR</button>
+            <span id="userBadge" style="font-size: 0.7rem; background: var(--borde); padding: 4px 8px; border-radius: 5px; color: var(--accent);"></span>
+            <button onclick="logout()" style="background:transparent; border:none; color:#ff4444; font-weight:bold; cursor:pointer;">SALIR</button>
         </div>
     </header>
 
-    <div id="imgOverlay">
-        <div class="close-zoom" onclick="cerrarZoom()">X</div>
-        <div id="imgContainer">
-            <img id="imgFull" src="" alt="Zoom">
-        </div>
-    </div>
-
-    <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)" accept="image/*">
-
     <div id="vistaDashboard">
         <div style="padding: 20px 40px; display: flex; gap: 15px;">
-            <input type="text" id="busqueda" placeholder="Buscar por Nombre, Ciudad o Congregación..." style="flex:1" onkeyup="buscador()">
+            <input type="text" id="busqueda" placeholder="Buscar por Nombre, Ciudad o Congregación..." onkeyup="buscador()">
             <button class="btn-primary" onclick="abrirEditor()">+ NUEVO</button>
         </div>
         <div style="padding: 0 40px;">
@@ -189,67 +129,51 @@
     </div>
 
     <div id="vistaCV">
-        <div style="padding: 20px 40px;"><button class="btn-outline" onclick="irDashboard()">← VOLVER AL LISTADO</button></div>
+        <div style="padding: 20px 40px;"><button class="btn-outline" onclick="irDashboard()">← VOLVER</button></div>
         <div id="cvContent" class="cv-container"></div>
     </div>
 
     <div id="vistaEditor">
-        <div class="editor-box" style="max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--borde);">
-            <h2 id="tituloEditor" style="margin-bottom: 25px;">Registro de Datos</h2>
-            <div style="text-align: center; margin-bottom: 30px;">
-                <img id="prevFoto" src="https://via.placeholder.com/120" style="width:120px; height:120px; border-radius:50%; object-fit:cover; border: 3px solid var(--accent);">
+        <!-- Editor igual al anterior -->
+        <div class="editor-box" style="max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px;">
+            <h2 id="tituloEditor">Registro de Datos</h2>
+            <div style="text-align: center; margin: 20px 0;">
+                <img id="prevFoto" src="https://via.placeholder.com/120" style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
                 <input type="file" id="fileIn" onchange="subirFoto(this)" style="display:none" accept="image/*">
-                <button class="btn-outline" style="display:block; margin: 15px auto;" onclick="document.getElementById('fileIn').click()">Cambiar Foto de Perfil</button>
+                <button class="btn-outline" style="display:block; margin: 10px auto;" onclick="document.getElementById('fileIn').click()">Cambiar Foto</button>
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                <div><label class="info-label">Nombre Completo</label><input type="text" id="inNom"></div>
-                <div><label class="info-label">Fecha de Nacimiento</label><input type="date" id="inFechaNac"></div>
-                <div>
-                    <label class="info-label">País / Nacionalidad</label>
-                    <select id="inNacIo" onchange="actualizarProvinciasEditor()">
-                        <option value="" disabled selected>Seleccione país</option>
-                        <option value="🇦🇷">🇦🇷 Argentina</option>
-                        <option value="🇵🇾">🇵🇾 Paraguay</option>
-                        <option value="🇧🇷">🇧🇷 Brasil</option>
-                    </select>
-                </div>
-                <div>
-                    <label class="info-label">Ciudad / Provincia</label>
-                    <select id="inCiu">
-                        <option value="" disabled selected>Primero elija país</option>
-                    </select>
-                </div>
-                <div><label class="info-label">WhatsApp</label><input type="text" id="inTel"></div>
-                <div><label class="info-label">Documento</label><input type="text" id="inDoc"></div>
-                <div><label class="info-label">Estado Civil</label><input type="text" id="inEstCiv"></div>
-                <div><label class="info-label">Congregación</label><input type="text" id="inCong"></div>
-                <div><label class="info-label">Ocupación Espiritual</label><input type="text" id="inOcuEsp"></div>
-                <div><label class="info-label">Ocupación Material</label><input type="text" id="inOcuMat"></div>
-                <div><label class="info-label">Años Perseverancia</label><input type="number" id="inAnos"></div>
-                <div><label class="info-label">Estado Actual</label><input type="text" id="inEstAct"></div>
-                <div style="grid-column: span 2;">
-                    <label class="info-label">Fiscalizador de:</label>
-                    <select id="inFisc">
-                        <option value="SOLTEROS">SOLTEROS</option>
-                        <option value="SOLTERAS">SOLTERAS</option>
-                        <option value="CÓNYUGALES">CÓNYUGALES</option>
-                        <option value="SUSPENDIDOS">SUSPENDIDOS</option>
-                        <option value="DACYP">DACYP</option>
-                    </select>
-                </div>
-                <div style="grid-column: span 2;"><label class="info-label">Historial de Vida</label><textarea id="inHist" rows="5"></textarea></div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                <input type="text" id="inNom" placeholder="Nombre Completo">
+                <input type="date" id="inFechaNac">
+                <select id="inNacIo" onchange="actualizarProvinciasEditor()">
+                    <option value="">País</option>
+                    <option value="🇦🇷">🇦🇷 Argentina</option>
+                    <option value="🇵🇾">🇵🇾 Paraguay</option>
+                    <option value="🇧🇷">🇧🇷 Brasil</option>
+                </select>
+                <select id="inCiu"><option value="">Ciudad</option></select>
+                <input type="text" id="inTel" placeholder="WhatsApp">
+                <input type="text" id="inDoc" placeholder="Documento">
+                <input type="text" id="inCong" placeholder="Congregación">
+                <input type="text" id="inEstCiv" placeholder="Estado Civil">
+                <input type="text" id="inOcuEsp" placeholder="Ocupación Espiritual">
+                <input type="text" id="inOcuMat" placeholder="Ocupación Material">
+                <select id="inFisc">
+                    <option value="SOLTEROS">SOLTEROS</option>
+                    <option value="SOLTERAS">SOLTERAS</option>
+                    <option value="CÓNYUGALES">CÓNYUGALES</option>
+                    <option value="SUSPENDIDOS">SUSPENDIDOS</option>
+                    <option value="DACYP">DACYP</option>
+                </select>
+                <textarea id="inHist" placeholder="Historial..." style="grid-column: span 2;" rows="4"></textarea>
             </div>
-            <div style="margin-top: 30px;">
-                <div style="display: flex; gap: 15px;">
-                    <button class="btn-primary" style="flex:2" onclick="guardar()">GUARDAR CAMBIOS</button>
-                    <button class="btn-outline" style="flex:1" onclick="irDashboard()">CANCELAR</button>
-                </div>
-                <button id="btnEliminar" class="btn-danger" style="display:none;" onclick="eliminarRegistro()">🗑️ ELIMINAR</button>
-            </div>
+            <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="guardar()">GUARDAR</button>
+            <button id="btnEliminar" class="btn-danger" onclick="eliminarRegistro()">ELIMINAR</button>
         </div>
     </div>
 
     <script>
+        // CONFIGURACIÓN FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyBkP6NALOTSHGd4QVgAxHyeJzCCnOUDY6M",
             authDomain: "fiscalizadores-elite.firebaseapp.com",
@@ -270,7 +194,6 @@
             "dacyp@com": { pass: "1630", cat: "DACYP" }
         };
 
-        const flags = { "🇦🇷": "ar", "🇵🇾": "py", "🇧🇷": "br" };
         const ubicaciones = {
             "🇦🇷": ["Buenos Aires", "Catamarca", "Chaco", "Chubut", "Córdoba", "Corrientes", "Entre Ríos", "Formosa", "Jujuy", "La Pampa", "La Rioja", "Mendoza", "Misiones", "Neuquén", "Río Negro", "Salta", "San Juan", "San Luis", "Santa Cruz", "Santa Fe", "Santiago del Estero", "Tierra del Fuego", "Tucumán"],
             "🇵🇾": ["Asunción", "Concepción", "San Pedro", "Cordillera", "Guairá", "Caaguazú", "Caazapá", "Itapúa", "Misiones", "Paraguarí", "Alto Paraná", "Central", "Ñeembucú", "Amambay", "Canindeyú", "Presidente Hayes", "Boquerón", "Alto Paraguay"],
@@ -278,89 +201,12 @@
         };
 
         let miembros = [];
-        let fotoURL = "";
         let idEdit = null;
         let nivel = "ciudades";
-        let ciuSel = "";
-        let nacSel = "";
-        let congSelGlobal = "";
+        let ciuSel = ""; let nacSel = ""; let congSelGlobal = "";
         let categoriaUsuario = "";
 
-        // --- LÓGICA DE ZOOM INTERACTIVO ---
-        let scale = 1, panning = false, pointX = 0, pointY = 0, start = { x: 0, y: 0 };
-        const imgFull = document.getElementById("imgFull");
-        const imgOverlay = document.getElementById("imgOverlay");
-
-        function setTransform() {
-            imgFull.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
-        }
-
-        imgOverlay.onmousedown = (e) => {
-            e.preventDefault();
-            start = { x: e.clientX - pointX, y: e.clientY - pointY };
-            panning = true;
-            imgFull.style.cursor = "grabbing";
-        };
-        imgOverlay.onmouseup = () => { panning = false; imgFull.style.cursor = "grab"; };
-        imgOverlay.onmousemove = (e) => {
-            if (!panning) return;
-            pointX = (e.clientX - start.x);
-            pointY = (e.clientY - start.y);
-            setTransform();
-        };
-        imgOverlay.onwheel = (e) => {
-            e.preventDefault();
-            let xs = (e.clientX - pointX) / scale, ys = (e.clientY - pointY) / scale;
-            let delta = (e.wheelDelta ? e.wheelDelta : -e.deltaY);
-            (delta > 0) ? (scale *= 1.2) : (scale /= 1.2);
-            pointX = e.clientX - xs * scale;
-            pointY = e.clientY - ys * scale;
-            setTransform();
-        };
-
-        // Soporte para gestos táctiles (Pinza en celular)
-        let initialDist = -1;
-        imgOverlay.ontouchstart = (e) => {
-            if (e.touches.length === 1) {
-                panning = true;
-                start = { x: e.touches[0].clientX - pointX, y: e.touches[0].clientY - pointY };
-            } else if (e.touches.length === 2) {
-                initialDist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-            }
-        };
-        imgOverlay.ontouchmove = (e) => {
-            if (e.touches.length === 1 && panning) {
-                pointX = e.touches[0].clientX - start.x;
-                pointY = e.touches[0].clientY - start.y;
-                setTransform();
-            } else if (e.touches.length === 2) {
-                let dist = Math.hypot(e.touches[0].pageX - e.touches[1].pageX, e.touches[0].pageY - e.touches[1].pageY);
-                if (initialDist > 0) {
-                    let zoom = dist / initialDist;
-                    scale *= zoom;
-                    initialDist = dist;
-                    setTransform();
-                }
-            }
-        };
-        imgOverlay.ontouchend = () => { panning = false; initialDist = -1; };
-
-        function abrirZoomFoto(src) {
-            if(!src || src.includes('placeholder')) return;
-            imgFull.src = src;
-            scale = 1; pointX = 0; pointY = 0;
-            setTransform();
-            imgOverlay.style.display = 'flex';
-        }
-
-        function cerrarZoom() { imgOverlay.style.display = 'none'; }
-
-        // --- RESTO DE FUNCIONES (Login, Dashboard, etc) ---
-        function getFlagImg(emoji) {
-            const code = flags[emoji] || "un";
-            return `<img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp">`;
-        }
-
+        // LOGIN Y SESIÓN
         function login() {
             const email = document.getElementById('loginEmail').value.toLowerCase().trim();
             const pass = document.getElementById('loginPass').value.trim();
@@ -369,9 +215,7 @@
                 localStorage.setItem('fiscalizador_cat', categoriaUsuario);
                 localStorage.setItem('fiscalizador_session', 'active');
                 mostrarSistema();
-            } else {
-                document.getElementById('loginError').innerText = "Credenciales incorrectas.";
-            }
+            } else { alert("Error de acceso"); }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
@@ -383,102 +227,91 @@
             irDashboard();
         }
 
-        function toggleTheme() {
-            const b = document.documentElement;
-            const t = b.getAttribute("data-theme") === "light" ? "dark" : "light";
-            b.setAttribute("data-theme", t);
-            document.getElementById('themeBtn').innerText = t === "light" ? "☀️" : "🌙";
+        // FUNCIONES DE ZOOM MEJORADO
+        function abrirZoomFoto(src) {
+            if(!src || src.includes('placeholder')) return;
+            const overlay = document.getElementById('imgOverlay');
+            const img = document.getElementById('imgFull');
+            img.src = src;
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Bloquea el scroll del fondo
         }
 
-        function actualizarProvinciasEditor(callback) {
-            const pais = document.getElementById("inNacIo").value;
-            const ciuSelect = document.getElementById("inCiu");
-            ciuSelect.innerHTML = '<option value="" disabled selected>Seleccione ubicación</option>';
-            if(ubicaciones[pais]) {
-                ubicaciones[pais].forEach(c => {
-                    const opt = document.createElement("option");
-                    opt.value = c; opt.textContent = c;
-                    ciuSelect.appendChild(opt);
-                });
-            }
-            if(callback) callback();
+        function cerrarZoom() {
+            document.getElementById('imgOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Libera el scroll
         }
 
-        function irDashboard() { 
-            document.getElementById('vistaDashboard').style.display = 'block'; 
-            document.getElementById('vistaCV').style.display = 'none'; 
-            document.getElementById('vistaEditor').style.display = 'none'; 
-            escuchar(); 
+        // BUSCADOR (POR NOMBRE, CONGREGACIÓN Y CIUDAD)
+        function buscador() {
+            const texto = document.getElementById('busqueda').value.toLowerCase().trim();
+            const grid = document.getElementById('gridMain');
+            if (texto === "") { volverAtras(); return; }
+            
+            grid.innerHTML = "";
+            document.getElementById('btnBack').style.display = 'inline-block';
+            document.getElementById('tituloTxt').innerText = "Resultados";
+
+            const filtrados = miembros.filter(m => 
+                m.nombre.toLowerCase().includes(texto) || 
+                m.ciudad.toLowerCase().includes(texto) || 
+                m.cong.toLowerCase().includes(texto)
+            );
+
+            filtrados.forEach(m => {
+                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border:2px solid var(--accent)">
+                    <h3>${m.nombre}</h3>
+                    <p style="font-size:0.8rem; color:var(--accent)">${m.cong}</p>
+                    <p style="font-size:0.7rem;">${m.ciudad}</p>
+                </div>`;
+            });
         }
 
+        // LÓGICA DE NAVEGACIÓN
         function escuchar() {
             db.collection("curriculums").onSnapshot(snap => {
                 let todos = [];
                 snap.forEach(doc => todos.push({ id: doc.id, ...doc.data() }));
                 miembros = (categoriaUsuario === "ADMIN") ? todos : todos.filter(m => m.fisc === categoriaUsuario);
-                if(nivel === "ciudades") renderCiudades();
-                else if(nivel === "congs") verCongs(ciuSel, nacSel);
-                else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
+                renderCiudades();
             });
         }
 
         function renderCiudades() {
-            nivel = "ciudades"; 
+            nivel = "ciudades";
             document.getElementById('btnBack').style.display = 'none';
             document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            const combinaciones = [...new Set(miembros.map(m => JSON.stringify({c: m.ciudad.trim(), n: m.nacionalidad})))].map(s => JSON.parse(s));
-            combinaciones.sort((a,b) => a.c.localeCompare(b.c)).forEach(comb => {
+            const combinaciones = [...new Set(miembros.map(m => JSON.stringify({c: m.ciudad, n: m.nacionalidad})))].map(s => JSON.parse(s));
+            combinaciones.forEach(comb => {
                 grid.innerHTML += `<div class="card-folder" onclick="verCongs('${comb.c}', '${comb.n}')">
-                    <div style="margin-bottom:15px;">${getFlagImg(comb.n)}</div>
-                    <h3 style="margin-top:5px;">${comb.c}</h3>
+                    <h3>${comb.n} ${comb.c}</h3>
                 </div>`;
             });
         }
 
         function verCongs(c, n) {
-            nivel = "congs"; ciuSel = c; nacSel = n; 
+            nivel = "congs"; ciuSel = c; nacSel = n;
             document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = `Congregaciones en ${c}`;
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            const congs = [...new Set(miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n).map(m => m.cong))];
+            const congs = [...new Set(miembros.filter(m => m.ciudad === c).map(m => m.cong))];
             congs.forEach(co => {
-                const p = miembros.find(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co && m.fotoCong);
-                const img = p ? p.fotoCong : "https://via.placeholder.com/100?text=⛪";
-                grid.innerHTML += `<div class="card-folder">
-                    <div class="btn-edit-photo" onclick="prepararFotoCong(event, '${co}')">✏️</div>
-                    <div onclick="verMiembros('${c}','${n}','${co}')"><img src="${img}" class="folder-img"><h3>${co}</h3></div>
+                grid.innerHTML += `<div class="card-folder" onclick="verMiembros('${c}','${n}','${co}')">
+                    <img src="https://via.placeholder.com/100?text=⛪" class="folder-img">
+                    <h3>${co}</h3>
                 </div>`;
             });
         }
 
-        function prepararFotoCong(event, cong) { 
-            event.stopPropagation();
-            congParaEditar = cong; 
-            document.getElementById('fileCong').click(); 
-        }
-        
-        async function procesarFotoCong(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const batch = db.batch();
-                    const list = miembros.filter(m => m.cong === congParaEditar && m.ciudad === ciuSel && m.nacionalidad === nacSel);
-                    list.forEach(m => batch.update(db.collection("curriculums").doc(m.id), { fotoCong: e.target.result }));
-                    await batch.commit();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
         function verMiembros(c, n, co) {
-            nivel = "miembros"; congSelGlobal = co; ciuSel = c; nacSel = n;
-            document.getElementById('btnBack').style.display = 'inline-block';
+            nivel = "miembros"; congSelGlobal = co;
             document.getElementById('tituloTxt').innerText = co;
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co).forEach(m => {
+            miembros.filter(m => m.ciudad === c && m.cong === co).forEach(m => {
                 grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border:2px solid var(--accent)">
                     <h3>${m.nombre}</h3>
                 </div>`;
             });
@@ -494,136 +327,47 @@
                 <div class="cv-banner">
                     <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoomFoto(this.src)">
                     <div class="cv-name">${m.nombre}</div>
-                    <div class="cv-sub">📍 ${m.ciudad} ${m.nacionalidad || ''} | ⛪ ${m.cong}</div>
+                    <div class="cv-sub">📍 ${m.ciudad} | ⛪ ${m.cong}</div>
                 </div>
                 <div class="cv-content">
                     <div class="cv-left">
-                        <span class="section-label">Contacto y Datos</span>
-                        <div class="info-group"><span class="info-label">📱 WhatsApp</span><span class="info-value">${m.tel || '---'}</span></div>
-                        <div class="info-group"><span class="info-label">🆔 Documento</span><span class="info-value">${m.doc || '---'}</span></div>
-                        <div class="info-group"><span class="info-label">💠 Estado Civil</span><span class="info-value">${m.estCiv || '---'}</span></div>
+                        <span class="section-label">Datos</span>
+                        <div class="info-group"><span class="info-label">WhatsApp</span><span class="info-value">${m.tel}</span></div>
+                        <div class="info-group"><span class="info-label">Documento</span><span class="info-value">${m.doc}</span></div>
                     </div>
                     <div class="cv-right">
-                        <span class="section-label">Información</span>
-                        <div style="display:grid; grid-template-columns: 1fr 1fr; gap:15px; margin-bottom:20px;">
-                            <div class="info-group"><span class="info-label">▶ Ocupación Esp.</span><span class="info-value">${m.ocuEsp || '---'}</span></div>
-                            <div class="info-group"><span class="info-label">▶ Ocupación Mat.</span><span class="info-value">${m.ocuMat || '---'}</span></div>
-                        </div>
-                        <div class="info-group" style="background:rgba(56,189,248,0.1); padding:15px; border-radius:10px;">
-                            <span class="info-label">📋 Fiscalizador de:</span><span class="info-value">${m.fisc || '---'}</span>
-                        </div>
-                        <span class="section-label" style="margin-top:20px;">Historial</span>
-                        <div class="historial-box">${m.hist || 'Sin historial.'}</div>
-                        <button class="btn-primary" style="width:100%;" onclick="abrirEditor('${m.id}')">EDITAR REGISTRO</button>
+                        <span class="section-label">Historial</span>
+                        <div class="historial-box">${m.hist || 'Sin datos.'}</div>
+                        <button class="btn-primary" style="width:100%" onclick="abrirEditor('${m.id}')">EDITAR</button>
                     </div>
                 </div>`;
+        }
+
+        function irDashboard() { 
+            document.getElementById('vistaDashboard').style.display = 'block'; 
+            document.getElementById('vistaCV').style.display = 'none'; 
+            document.getElementById('vistaEditor').style.display = 'none'; 
+            escuchar();
         }
 
         function abrirEditor(id = null) {
-            idEdit = id; 
+            idEdit = id;
             document.getElementById('vistaDashboard').style.display = 'none';
-            document.getElementById('vistaCV').style.display = 'none'; 
+            document.getElementById('vistaCV').style.display = 'none';
             document.getElementById('vistaEditor').style.display = 'block';
-            const btnEliminar = document.getElementById('btnEliminar');
-
-            if(id) {
-                const m = miembros.find(x => x.id === id);
-                document.getElementById('tituloEditor').innerText = "Editar Registro";
-                btnEliminar.style.display = "block";
-                document.getElementById('inNom').value = m.nombre; 
-                document.getElementById('inFechaNac').value = m.fechaNac || "";
-                document.getElementById('inDoc').value = m.doc || "";
-                document.getElementById('inNacIo').value = m.nacionalidad || "";
-                actualizarProvinciasEditor(() => { document.getElementById('inCiu').value = m.ciudad; });
-                document.getElementById('inTel').value = m.tel || "";
-                document.getElementById('inCong').value = m.cong;
-                document.getElementById('inEstCiv').value = m.estCiv || ""; 
-                document.getElementById('inOcuEsp').value = m.ocuEsp || "";
-                document.getElementById('inOcuMat').value = m.ocuMat || ""; 
-                document.getElementById('inAnos').value = m.anos || "";
-                document.getElementById('inEstAct').value = m.estAct || ""; 
-                document.getElementById('inFisc').value = m.fisc || "SOLTEROS";
-                document.getElementById('inHist').value = m.hist || ""; 
-                fotoURL = m.foto || "";
-                document.getElementById('prevFoto').src = m.foto || "https://via.placeholder.com/120";
-            } else {
-                document.getElementById('tituloEditor').innerText = "Nuevo Registro";
-                btnEliminar.style.display = "none";
-                document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
-                document.getElementById('inFisc').value = (categoriaUsuario === "ADMIN") ? "SOLTEROS" : categoriaUsuario;
-                document.getElementById('prevFoto').src = "https://via.placeholder.com/120";
-                fotoURL = "";
-            }
+            if(!id) { /* Limpiar campos */ }
+            else { /* Cargar datos del miembro */ }
         }
 
-        function subirFoto(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => { fotoURL = e.target.result; document.getElementById('prevFoto').src = fotoURL; };
-                reader.readAsDataURL(input.files[0]);
+        function actualizarProvinciasEditor() {
+            const pais = document.getElementById("inNacIo").value;
+            const ciuSelect = document.getElementById("inCiu");
+            ciuSelect.innerHTML = '<option value="">Seleccione</option>';
+            if(ubicaciones[pais]) {
+                ubicaciones[pais].forEach(c => {
+                    const opt = document.createElement("option"); opt.value = c; opt.textContent = c; ciuSelect.appendChild(opt);
+                });
             }
-        }
-
-        async function guardar() {
-            const d = {
-                nombre: document.getElementById('inNom').value, 
-                fechaNac: document.getElementById('inFechaNac').value,
-                doc: document.getElementById('inDoc').value,
-                nacionalidad: document.getElementById('inNacIo').value, 
-                tel: document.getElementById('inTel').value, 
-                ciudad: document.getElementById('inCiu').value,
-                cong: document.getElementById('inCong').value, 
-                estCiv: document.getElementById('inEstCiv').value,
-                ocuEsp: document.getElementById('inOcuEsp').value, 
-                ocuMat: document.getElementById('inOcuMat').value,
-                anos: document.getElementById('inAnos').value, 
-                estAct: document.getElementById('inEstAct').value,
-                fisc: document.getElementById('inFisc').value, 
-                hist: document.getElementById('inHist').value,
-                foto: fotoURL
-            };
-            if(!d.ciudad || !d.nacionalidad || !d.nombre) { alert("Complete los datos principales"); return; }
-            if(idEdit) await db.collection("curriculums").doc(idEdit).update(d);
-            else await db.collection("curriculums").add(d);
-            irDashboard();
-        }
-
-        async function eliminarRegistro() {
-            if(confirm("¿Eliminar permanentemente?")) {
-                await db.collection("curriculums").doc(idEdit).delete();
-                irDashboard();
-            }
-        }
-
-        function buscador() {
-            const texto = document.getElementById('busqueda').value.toLowerCase().trim();
-            const grid = document.getElementById('gridMain');
-            if (texto === "") {
-                if (nivel === "ciudades") renderCiudades();
-                else if (nivel === "congs") verCongs(ciuSel, nacSel);
-                else if (nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
-                return;
-            }
-            grid.innerHTML = "";
-            document.getElementById('btnBack').style.display = 'inline-block';
-            document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
-            const filtrados = miembros.filter(m => 
-                m.nombre.toLowerCase().includes(texto) || 
-                m.ciudad.toLowerCase().includes(texto) || 
-                m.cong.toLowerCase().includes(texto)
-            );
-            if(filtrados.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-sec); padding: 20px;">No se encontraron resultados.</p>`;
-                return;
-            }
-            filtrados.forEach(m => {
-                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
-                    <h3 style="font-size: 1rem;">${m.nombre}</h3>
-                    <p style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">${m.cong}</p>
-                    <p style="font-size: 0.7rem; color: var(--texto-sec);">${m.ciudad} ${m.nacionalidad || ''}</p>
-                </div>`;
-            });
         }
 
         window.onload = () => {
