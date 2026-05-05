@@ -47,8 +47,7 @@
             touch-action: pinch-zoom; 
         }
         #imgOverlay img { 
-            max-width: 100%; 
-            max-height: 100%; 
+            max-width: 100%; max-height: 100%; 
             object-fit: contain; 
             transition: transform 0.2s ease;
         }
@@ -66,14 +65,9 @@
         }
 
         input, select, textarea { 
-            font-size: 16px !important; 
-            background: var(--card);
-            border: 1px solid var(--borde);
-            color: var(--texto);
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            outline: none;
+            font-size: 16px !important; background: var(--card);
+            border: 1px solid var(--borde); color: var(--texto);
+            padding: 12px; border-radius: 10px; width: 100%; outline: none;
         }
         
         input:focus { border-color: var(--accent); }
@@ -92,26 +86,17 @@
         .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; user-select: none; }
         .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; user-select: none; }
         .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
-        .btn-primary:active, .btn-outline:active, .btn-danger:active { transform: scale(0.95); }
 
         .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px 40px; }
         .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; user-select: none; }
         .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
         
-        .btn-edit-photo { 
-            position: absolute; top: 10px; right: 10px; 
-            background: var(--accent); color: white; 
-            width: 35px; height: 35px; border-radius: 50%; 
-            display: flex; align-items: center; justify-content: center; 
-            border: 3px solid var(--card); cursor: pointer; z-index: 100; 
-        }
-
         .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); margin-bottom: 50px; }
         .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; position: relative; }
         .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: zoom-in; }
 
         .cv-name { font-size: 2rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; }
-        .cv-sub { color: #e0f2fe; font-weight: 600; margin-top: 5px; display: flex; justify-content: center; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .cv-sub { color: #e0f2fe; font-weight: 600; margin-top: 5px; display: flex; justify-content: center; gap: 10px; align-items: center; }
 
         .cv-content { display: grid; grid-template-columns: 1fr 1.5fr; gap: 0; }
         .cv-left { background: rgba(0,0,0,0.05); padding: 40px; border-right: 1px solid var(--borde); }
@@ -204,9 +189,7 @@
                 </div>
                 <div>
                     <label class="info-label">Ciudad / Provincia</label>
-                    <select id="inCiu">
-                        <option value="" disabled selected>Primero elija país</option>
-                    </select>
+                    <select id="inCiu"><option value="" disabled selected>Primero elija país</option></select>
                 </div>
                 <div><label class="info-label">WhatsApp</label><input type="text" id="inTel"></div>
                 <div><label class="info-label">Documento</label><input type="text" id="inDoc"></div>
@@ -266,34 +249,9 @@
         };
 
         const flags = { "🇦🇷": "ar", "🇵🇾": "py", "🇧🇷": "br" };
-
-        let miembros = [];
-        let fotoURL = "";
-        let idEdit = null;
-        let nivel = "ciudades";
-        let ciuSel = "";
-        let nacSel = "";
-        let congSelGlobal = "";
-        let congParaEditar = "";
-        let categoriaUsuario = "";
-
-        function getFlagImg(emoji) {
-            const code = flags[emoji] || "un";
-            return `<img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp">`;
-        }
-
-        // --- LÓGICA DE EDAD ---
-        function calcularEdad(fecha) {
-            if(!fecha) return '---';
-            const cumple = new Date(fecha);
-            const hoy = new Date();
-            let edad = hoy.getFullYear() - cumple.getFullYear();
-            const m = hoy.getMonth() - cumple.getMonth();
-            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) {
-                edad--;
-            }
-            return edad > 0 ? edad + " años" : "---";
-        }
+        let miembros = []; let fotoURL = ""; let idEdit = null;
+        let nivel = "ciudades"; let ciuSel = ""; let nacSel = "";
+        let congSelGlobal = ""; let congParaEditar = ""; let categoriaUsuario = "";
 
         function login() {
             const email = document.getElementById('loginEmail').value.toLowerCase().trim();
@@ -303,9 +261,7 @@
                 localStorage.setItem('fiscalizador_cat', categoriaUsuario);
                 localStorage.setItem('fiscalizador_session', 'active');
                 mostrarSistema();
-            } else {
-                document.getElementById('loginError').innerText = "Credenciales incorrectas.";
-            }
+            } else { document.getElementById('loginError').innerText = "Credenciales incorrectas."; }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
@@ -324,125 +280,34 @@
             document.getElementById('themeBtn').innerText = t === "light" ? "☀️" : "🌙";
         }
 
-        function actualizarProvinciasEditor(callback) {
-            const pais = document.getElementById("inNacIo").value;
-            const ciuSelect = document.getElementById("inCiu");
-            ciuSelect.innerHTML = '<option value="" disabled selected>Seleccione ubicación</option>';
-            if(ubicaciones[pais]) {
-                ubicaciones[pais].forEach(c => {
-                    const opt = document.createElement("option");
-                    opt.value = c; opt.textContent = c;
-                    ciuSelect.appendChild(opt);
-                });
-            }
-            if(callback) callback();
+        function calcularEdad(fecha) {
+            if(!fecha) return '---';
+            const cumple = new Date(fecha);
+            const hoy = new Date();
+            let edad = hoy.getFullYear() - cumple.getFullYear();
+            const m = hoy.getMonth() - cumple.getMonth();
+            if (m < 0 || (m === 0 && hoy.getDate() < cumple.getDate())) { edad--; }
+            return edad + " años";
         }
-
-        function irDashboard() { 
-            document.getElementById('vistaDashboard').style.display = 'block'; 
-            document.getElementById('vistaCV').style.display = 'none'; 
-            document.getElementById('vistaEditor').style.display = 'none'; 
-            escuchar(); 
-        }
-
-        function escuchar() {
-            db.collection("curriculums").onSnapshot(snap => {
-                let todos = [];
-                snap.forEach(doc => todos.push({ id: doc.id, ...doc.data() }));
-                miembros = (categoriaUsuario === "ADMIN") ? todos : todos.filter(m => m.fisc === categoriaUsuario);
-                if(nivel === "ciudades") renderCiudades();
-                else if(nivel === "congs") verCongs(ciuSel, nacSel);
-                else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
-            });
-        }
-
-        function renderCiudades() {
-            nivel = "ciudades"; 
-            document.getElementById('btnBack').style.display = 'none';
-            document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
-            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            const combinaciones = [...new Set(miembros.map(m => JSON.stringify({c: m.ciudad.trim(), n: m.nacionalidad})))].map(s => JSON.parse(s));
-            combinaciones.sort((a,b) => a.c.localeCompare(b.c)).forEach(comb => {
-                grid.innerHTML += `<div class="card-folder" onclick="verCongs('${comb.c}', '${comb.n}')">
-                    <div style="margin-bottom:15px;">${getFlagImg(comb.n)}</div>
-                    <h3 style="margin-top:5px;">${comb.c}</h3>
-                </div>`;
-            });
-        }
-
-        function verCongs(c, n) {
-            nivel = "congs"; ciuSel = c; nacSel = n; 
-            document.getElementById('btnBack').style.display = 'inline-block';
-            document.getElementById('tituloTxt').innerText = `Congregaciones en ${c}`;
-            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            const congs = [...new Set(miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n).map(m => m.cong))];
-            congs.forEach(co => {
-                const p = miembros.find(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co && m.fotoCong);
-                const img = p ? p.fotoCong : "https://via.placeholder.com/100?text=⛪";
-                grid.innerHTML += `<div class="card-folder">
-                    <div class="btn-edit-photo" onclick="prepararFotoCong(event, '${co}')">✏️</div>
-                    <div onclick="verMiembros('${c}','${n}','${co}')"><img src="${img}" class="folder-img"><h3>${co}</h3></div>
-                </div>`;
-            });
-        }
-
-        function prepararFotoCong(event, cong) { 
-            event.stopPropagation();
-            congParaEditar = cong; 
-            document.getElementById('fileCong').click(); 
-        }
-        
-        async function procesarFotoCong(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = async (e) => {
-                    const batch = db.batch();
-                    const list = miembros.filter(m => m.cong === congParaEditar && m.ciudad === ciuSel && m.nacionalidad === nacSel);
-                    list.forEach(m => batch.update(db.collection("curriculums").doc(m.id), { fotoCong: e.target.result }));
-                    await batch.commit();
-                };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        function verMiembros(c, n, co) {
-            nivel = "miembros"; congSelGlobal = co; ciuSel = c; nacSel = n;
-            document.getElementById('btnBack').style.display = 'inline-block';
-            document.getElementById('tituloTxt').innerText = co;
-            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
-            miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co).forEach(m => {
-                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
-                    <h3>${m.nombre}</h3>
-                </div>`;
-            });
-        }
-
-        function volverAtras() { if(nivel === "miembros") verCongs(ciuSel, nacSel); else renderCiudades(); }
 
         function verCV(id) {
             const m = miembros.find(x => x.id === id);
             document.getElementById('vistaDashboard').style.display = 'none';
             document.getElementById('vistaCV').style.display = 'block';
-            
-            const edadDisplay = calcularEdad(m.fechaNac);
+            const edadCalculada = calcularEdad(m.fechaNac);
 
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-banner">
                     <img src="${m.foto || 'https://via.placeholder.com/160'}" class="cv-photo" onclick="abrirZoomFoto(this.src)">
                     <div class="cv-name">${m.nombre}</div>
-                    <div class="cv-sub">
-                        <span>🎂 ${edadDisplay}</span> | 
-                        <span>📍 ${m.ciudad}</span> | 
-                        <span>⛪ ${m.cong}</span>
-                    </div>
+                    <div class="cv-sub">🎂 ${edadCalculada} | 📍 ${m.ciudad} | ⛪ ${m.cong}</div>
                 </div>
                 <div class="cv-content">
                     <div class="cv-left">
                         <span class="section-label">Contacto y Datos</span>
                         <div class="info-group"><span class="info-label">📱 WhatsApp</span><span class="info-value">${m.tel || '---'}</span></div>
                         <div class="info-group"><span class="info-label">🆔 Documento</span><span class="info-value">${m.doc || '---'}</span></div>
-                        <div class="info-group"><span class="info-label">📅 Nacimiento</span><span class="info-value">${m.fechaNac || '---'}</span></div>
+                        <div class="info-group"><span class="info-label">📅 Edad</span><span class="info-value">${edadCalculada}</span></div>
                         <div class="info-group"><span class="info-label">💠 Estado Civil</span><span class="info-value">${m.estCiv || '---'}</span></div>
                     </div>
                     <div class="cv-right">
@@ -463,149 +328,139 @@
 
         function abrirZoomFoto(src) {
             if(!src || src.includes('placeholder')) return;
-            document.getElementById('viewportMeta').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes, viewport-fit=cover');
+            document.getElementById('viewportMeta').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes');
             document.getElementById('imgFull').src = src;
             document.getElementById('imgOverlay').style.display = 'flex';
         }
 
         function cerrarZoomFoto() {
             document.getElementById('imgOverlay').style.display = 'none';
-            document.getElementById('viewportMeta').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover');
+            document.getElementById('viewportMeta').setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
         }
 
-        function abrirEditor(id = null) {
-            idEdit = id; 
-            document.getElementById('vistaDashboard').style.display = 'none';
-            document.getElementById('vistaCV').style.display = 'none'; 
-            document.getElementById('vistaEditor').style.display = 'block';
-            const btnEliminar = document.getElementById('btnEliminar');
-
-            if(id) {
-                const m = miembros.find(x => x.id === id);
-                document.getElementById('tituloEditor').innerText = "Editar Registro";
-                btnEliminar.style.display = "block";
-                document.getElementById('inNom').value = m.nombre; 
-                document.getElementById('inFechaNac').value = m.fechaNac || "";
-                document.getElementById('inDoc').value = m.doc || "";
-                document.getElementById('inNacIo').value = m.nacionalidad || "";
-                actualizarProvinciasEditor(() => { document.getElementById('inCiu').value = m.ciudad; });
-                document.getElementById('inTel').value = m.tel || "";
-                document.getElementById('inCong').value = m.cong;
-                document.getElementById('inEstCiv').value = m.estCiv || ""; 
-                document.getElementById('inOcuEsp').value = m.ocuEsp || "";
-                document.getElementById('inOcuMat').value = m.ocuMat || ""; 
-                document.getElementById('inAnos').value = m.anos || "";
-                document.getElementById('inEstAct').value = m.estAct || ""; 
-                document.getElementById('inFisc').value = m.fisc || "SOLTEROS";
-                document.getElementById('inHist').value = m.hist || ""; 
-                fotoURL = m.foto || "";
-                document.getElementById('prevFoto').src = m.foto || "https://via.placeholder.com/120";
-            } else {
-                document.getElementById('tituloEditor').innerText = "Nuevo Registro";
-                btnEliminar.style.display = "none";
-                document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
-                document.getElementById('inFisc').value = (categoriaUsuario === "ADMIN") ? "SOLTEROS" : categoriaUsuario;
-                document.getElementById('prevFoto').src = "https://via.placeholder.com/120";
-                fotoURL = "";
-            }
+        function escuchar() {
+            db.collection("curriculums").onSnapshot(snap => {
+                let todos = []; snap.forEach(doc => todos.push({ id: doc.id, ...doc.data() }));
+                miembros = (categoriaUsuario === "ADMIN") ? todos : todos.filter(m => m.fisc === categoriaUsuario);
+                if(nivel === "ciudades") renderCiudades();
+                else if(nivel === "congs") verCongs(ciuSel, nacSel);
+                else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
+            });
         }
 
-        function subirFoto(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => { fotoURL = e.target.result; document.getElementById('prevFoto').src = fotoURL; };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        async function guardar() {
-            const d = {
-                nombre: document.getElementById('inNom').value, 
-                fechaNac: document.getElementById('inFechaNac').value,
-                doc: document.getElementById('inDoc').value,
-                nacionalidad: document.getElementById('inNacIo').value, 
-                tel: document.getElementById('inTel').value, 
-                ciudad: document.getElementById('inCiu').value,
-                cong: document.getElementById('inCong').value, 
-                estCiv: document.getElementById('inEstCiv').value,
-                ocuEsp: document.getElementById('inOcuEsp').value, 
-                ocuMat: document.getElementById('inOcuMat').value,
-                anos: document.getElementById('inAnos').value, 
-                estAct: document.getElementById('inEstAct').value,
-                fisc: document.getElementById('inFisc').value, 
-                hist: document.getElementById('inHist').value,
-                foto: fotoURL
-            };
-            if(!d.ciudad || !d.nacionalidad || !d.nombre) { alert("Complete los datos principales"); return; }
-            if(idEdit) await db.collection("curriculums").doc(idEdit).update(d);
-            else await db.collection("curriculums").add(d);
-            irDashboard();
-        }
-
-        async function eliminarRegistro() {
-            if(confirm("¿Eliminar permanentemente?")) {
-                await db.collection("curriculums").doc(idEdit).delete();
-                irDashboard();
-            }
-        }
-
-        function buscador() {
-            const texto = document.getElementById('busqueda').value.toLowerCase().trim();
-            const grid = document.getElementById('gridMain');
-            
-            if (texto === "") {
-                if (nivel === "ciudades") renderCiudades();
-                else if (nivel === "congs") verCongs(ciuSel, nacSel);
-                else if (nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
-                return;
-            }
-
-            grid.innerHTML = "";
-            document.getElementById('btnBack').style.display = 'inline-block';
-            document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
-
-            const filtrados = miembros.filter(m => 
-                m.nombre.toLowerCase().includes(texto) || 
-                m.ciudad.toLowerCase().includes(texto) || 
-                m.cong.toLowerCase().includes(texto)
-            );
-
-            if(filtrados.length === 0) {
-                grid.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: var(--texto-sec); padding: 20px;">No se encontraron resultados.</p>`;
-                return;
-            }
-
-            filtrados.forEach(m => {
-                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
-                    <h3 style="font-size: 1rem;">${m.nombre}</h3>
-                    <p style="font-size: 0.75rem; color: var(--accent); font-weight: 600;">${m.cong}</p>
-                    <p style="font-size: 0.7rem; color: var(--texto-sec);">${m.ciudad} ${m.nacionalidad || ''}</p>
+        function renderCiudades() {
+            nivel = "ciudades"; document.getElementById('btnBack').style.display = 'none';
+            document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
+            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
+            const combinaciones = [...new Set(miembros.map(m => JSON.stringify({c: m.ciudad.trim(), n: m.nacionalidad})))].map(s => JSON.parse(s));
+            combinaciones.sort((a,b) => a.c.localeCompare(b.c)).forEach(comb => {
+                const code = flags[comb.n] || "un";
+                grid.innerHTML += `<div class="card-folder" onclick="verCongs('${comb.c}', '${comb.n}')">
+                    <div style="margin-bottom:15px;"><img class="flag-img" src="https://flagpedia.net/data/flags/w580/${code}.webp"></div>
+                    <h3 style="margin-top:5px;">${comb.c}</h3>
                 </div>`;
             });
         }
 
-        document.addEventListener('touchstart', function (event) {
-            if (event.touches.length > 1 && !document.getElementById('imgOverlay').contains(event.target)) {
-                event.preventDefault();
-            }
-        }, { passive: false });
+        function verCongs(c, n) {
+            nivel = "congs"; ciuSel = c; nacSel = n; 
+            document.getElementById('btnBack').style.display = 'inline-block';
+            document.getElementById('tituloTxt').innerText = `Congregaciones en ${c}`;
+            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
+            const congs = [...new Set(miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n).map(m => m.cong))];
+            congs.forEach(co => {
+                const p = miembros.find(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co && m.fotoCong);
+                const img = p ? p.fotoCong : "https://via.placeholder.com/100?text=⛪";
+                grid.innerHTML += `<div class="card-folder">
+                    <div style="position: absolute; top: 10px; right: 10px; background: var(--accent); color: white; width: 35px; height: 35px; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 3px solid var(--card); cursor: pointer; z-index: 100;" onclick="prepararFotoCong(event, '${co}')">✏️</div>
+                    <div onclick="verMiembros('${c}','${n}','${co}')"><img src="${img}" class="folder-img"><h3>${co}</h3></div>
+                </div>`;
+            });
+        }
 
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function (event) {
-            const now = (new Date()).getTime();
-            if (now - lastTouchEnd <= 300 && !document.getElementById('imgOverlay').contains(event.target)) {
-                event.preventDefault();
-            }
-            lastTouchEnd = now;
-        }, false);
+        function verMiembros(c, n, co) {
+            nivel = "miembros"; congSelGlobal = co; ciuSel = c; nacSel = n;
+            document.getElementById('btnBack').style.display = 'inline-block';
+            document.getElementById('tituloTxt').innerText = co;
+            const grid = document.getElementById('gridMain'); grid.innerHTML = "";
+            miembros.filter(m => m.ciudad.trim() === c && m.nacionalidad === n && m.cong === co).forEach(m => {
+                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:80px; height:80px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <h3>${m.nombre}</h3>
+                </div>`;
+            });
+        }
 
-        window.onload = () => {
-            if(localStorage.getItem('fiscalizador_session') === 'active') {
-                categoriaUsuario = localStorage.getItem('fiscalizador_cat');
-                mostrarSistema();
+        function volverAtras() { if(nivel === "miembros") verCongs(ciuSel, nacSel); else renderCiudades(); }
+        function irDashboard() { document.getElementById('vistaDashboard').style.display = 'block'; document.getElementById('vistaCV').style.display = 'none'; document.getElementById('vistaEditor').style.display = 'none'; escuchar(); }
+
+        function abrirEditor(id = null) {
+            idEdit = id; document.getElementById('vistaDashboard').style.display = 'none'; document.getElementById('vistaCV').style.display = 'none'; document.getElementById('vistaEditor').style.display = 'block';
+            if(id) {
+                const m = miembros.find(x => x.id === id);
+                document.getElementById('tituloEditor').innerText = "Editar Registro"; document.getElementById('btnEliminar').style.display = "block";
+                document.getElementById('inNom').value = m.nombre; document.getElementById('inFechaNac').value = m.fechaNac || "";
+                document.getElementById('inDoc').value = m.doc || ""; document.getElementById('inNacIo').value = m.nacionalidad || "";
+                actualizarProvinciasEditor(() => { document.getElementById('inCiu').value = m.ciudad; });
+                document.getElementById('inTel').value = m.tel || ""; document.getElementById('inCong').value = m.cong;
+                document.getElementById('inEstCiv').value = m.estCiv || ""; document.getElementById('inOcuEsp').value = m.ocuEsp || "";
+                document.getElementById('inOcuMat').value = m.ocuMat || ""; document.getElementById('inAnos').value = m.anos || "";
+                document.getElementById('inEstAct').value = m.estAct || ""; document.getElementById('inFisc').value = m.fisc || "SOLTEROS";
+                document.getElementById('inHist').value = m.hist || ""; fotoURL = m.foto || "";
+                document.getElementById('prevFoto').src = m.foto || "https://via.placeholder.com/120";
+            } else {
+                document.getElementById('tituloEditor').innerText = "Nuevo Registro"; document.getElementById('btnEliminar').style.display = "none";
+                document.querySelectorAll('#vistaEditor input, #vistaEditor textarea').forEach(i => i.value = "");
+                document.getElementById('inFisc').value = (categoriaUsuario === "ADMIN") ? "SOLTEROS" : categoriaUsuario;
+                document.getElementById('prevFoto').src = "https://via.placeholder.com/120"; fotoURL = "";
             }
-        };
+        }
+
+        function actualizarProvinciasEditor(callback) {
+            const pais = document.getElementById("inNacIo").value;
+            const ciuSelect = document.getElementById("inCiu");
+            ciuSelect.innerHTML = '<option value="" disabled selected>Seleccione ubicación</option>';
+            if(ubicaciones[pais]) { ubicaciones[pais].forEach(c => { const opt = document.createElement("option"); opt.value = c; opt.textContent = c; ciuSelect.appendChild(opt); }); }
+            if(callback) callback();
+        }
+
+        function subirFoto(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = e => { fotoURL = e.target.result; document.getElementById('prevFoto').src = fotoURL; }; reader.readAsDataURL(input.files[0]); } }
+
+        async function guardar() {
+            const d = {
+                nombre: document.getElementById('inNom').value, fechaNac: document.getElementById('inFechaNac').value,
+                doc: document.getElementById('inDoc').value, nacionalidad: document.getElementById('inNacIo').value, 
+                tel: document.getElementById('inTel').value, ciudad: document.getElementById('inCiu').value,
+                cong: document.getElementById('inCong').value, estCiv: document.getElementById('inEstCiv').value,
+                ocuEsp: document.getElementById('inOcuEsp').value, ocuMat: document.getElementById('inOcuMat').value,
+                anos: document.getElementById('inAnos').value, estAct: document.getElementById('inEstAct').value,
+                fisc: document.getElementById('inFisc').value, hist: document.getElementById('inHist').value, foto: fotoURL
+            };
+            if(!d.ciudad || !d.nacionalidad || !d.nombre) { alert("Complete los datos principales"); return; }
+            if(idEdit) await db.collection("curriculums").doc(idEdit).update(d); else await db.collection("curriculums").add(d);
+            irDashboard();
+        }
+
+        async function eliminarRegistro() { if(confirm("¿Eliminar permanentemente?")) { await db.collection("curriculums").doc(idEdit).delete(); irDashboard(); } }
+
+        function buscador() {
+            const texto = document.getElementById('busqueda').value.toLowerCase().trim();
+            const grid = document.getElementById('gridMain');
+            if (texto === "") { volverAtras(); return; }
+            grid.innerHTML = ""; document.getElementById('btnBack').style.display = 'inline-block';
+            document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
+            miembros.filter(m => m.nombre.toLowerCase().includes(texto) || m.ciudad.toLowerCase().includes(texto) || m.cong.toLowerCase().includes(texto)).forEach(m => {
+                grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
+                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <h3>${m.nombre}</h3><p style="font-size: 0.75rem; color: var(--accent);">${m.cong}</p>
+                </div>`;
+            });
+        }
+
+        function prepararFotoCong(event, cong) { event.stopPropagation(); congParaEditar = cong; document.getElementById('fileCong').click(); }
+        async function procesarFotoCong(input) { if (input.files && input.files[0]) { const reader = new FileReader(); reader.onload = async (e) => { const batch = db.batch(); const list = miembros.filter(m => m.cong === congParaEditar && m.ciudad === ciuSel && m.nacionalidad === nacSel); list.forEach(m => batch.update(db.collection("curriculums").doc(m.id), { fotoCong: e.target.result })); await batch.commit(); }; reader.readAsDataURL(input.files[0]); } }
+
+        window.onload = () => { if(localStorage.getItem('fiscalizador_session') === 'active') { categoriaUsuario = localStorage.getItem('fiscalizador_cat'); mostrarSistema(); } };
     </script>
 </body>
 </html>
