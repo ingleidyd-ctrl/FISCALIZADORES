@@ -2,6 +2,7 @@
 <html lang="es">
 <head> 
     <meta charset="UTF-8">
+    <!-- El viewport bloquea el zoom general para que la app sea estable -->
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>FISCALIZADORES</title>
     
@@ -36,22 +37,24 @@
         body { 
             background-color: var(--bg); color: var(--texto); line-height: 1.6; 
             overflow-x: hidden; width: 100%; position: relative;
-            touch-action: pan-x pan-y; /* Bloquea zoom en el body */
+            touch-action: pan-x pan-y; /* Bloquea zoom en el cuerpo */
         }
 
-        /* OVERLAY CORREGIDO PARA PERMITIR ZOOM */
+        /* --- VISOR DE FOTOS CON ZOOM HABILITADO --- */
         #imgOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(0,0,0,0.95); display: none; justify-content: center; 
             align-items: center; z-index: 5000;
-            overflow: auto; /* Permite desplazamiento si la foto es grande */
-            touch-action: pinch-zoom; /* HABILITA EL ZOOM AQUÍ */
+            /* Esta línea permite el zoom con los dedos en este elemento */
+            touch-action: pinch-zoom; 
+            overflow: auto;
         }
         #imgOverlay img { 
             max-width: 100%; 
             max-height: 100%; 
             object-fit: contain; 
-            transition: transform 0.2s ease;
+            /* Quitamos la transición de 0.3s solo para la imagen del zoom para que no se sienta pesada al ampliar */
+            transition: none; 
         }
 
         .flag-img { width: 60px; height: auto; border-radius: 4px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
@@ -68,15 +71,10 @@
 
         input, select, textarea { 
             font-size: 16px !important; 
-            background: var(--card);
-            border: 1px solid var(--borde);
-            color: var(--texto);
-            padding: 12px;
-            border-radius: 10px;
-            width: 100%;
-            outline: none;
+            background: var(--card); border: 1px solid var(--borde); color: var(--texto);
+            padding: 12px; border-radius: 10px; width: 100%; outline: none;
         }
-        
+
         header { 
             background: var(--card); padding: 0.8rem 2rem; 
             display: flex; justify-content: space-between; align-items: center; 
@@ -86,30 +84,20 @@
         .app-logo { height: 45px; width: auto; border-radius: 8px; }
         .logo-text { font-weight: 800; font-size: 1.2rem; letter-spacing: -0.5px; }
 
-        .theme-toggle { background: var(--bg); border: 1px solid var(--borde); color: var(--texto); padding: 8px 15px; border-radius: 20px; cursor: pointer; font-weight: 600; }
-
-        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; user-select: none; }
-        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; user-select: none; }
-        .btn-danger { background: #ef4444; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 10px; width: 100%; }
+        .btn-primary { background: var(--accent); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 700; cursor: pointer; }
+        .btn-outline { background: transparent; border: 1px solid var(--accent); color: var(--accent); padding: 10px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; }
 
         .grid-main { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; padding: 20px 40px; }
         .card-folder { background: var(--card); padding: 25px; border-radius: 18px; border: 1px solid var(--borde); text-align: center; cursor: pointer; position: relative; }
         .folder-img { width: 100px; height: 100px; border-radius: 50%; object-fit: cover; border: 3px solid var(--accent); margin-bottom: 15px; }
         
-        .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); margin-bottom: 50px; }
-        .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; position: relative; }
+        .cv-container { max-width: 800px; margin: 20px auto; background: var(--card); border-radius: 24px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .cv-banner { background: #0284c7; padding: 40px 20px; text-align: center; color: white; }
         .cv-photo { width: 160px; height: 160px; border-radius: 50%; border: 4px solid white; object-fit: cover; margin-bottom: 20px; cursor: zoom-in; }
 
-        .cv-content { display: grid; grid-template-columns: 1fr 1.5fr; gap: 0; }
-        .cv-left { background: rgba(0,0,0,0.05); padding: 40px; border-right: 1px solid var(--borde); }
-        .cv-right { padding: 40px; }
-
-        .info-group { margin-bottom: 20px; }
-        .info-label { font-size: 0.85rem; color: var(--texto-sec); display: block; margin-bottom: 5px; }
-        .info-value { font-size: 1.1rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
         .historial-box { white-space: pre-line; color: var(--texto-sec); font-size: 1rem; margin-bottom: 30px; }
 
-        @media (max-width: 768px) { .cv-content { grid-template-columns: 1fr; } .grid-main { padding: 20px; } }
+        @media (max-width: 768px) { .grid-main { padding: 20px; } }
         #mainHeader, #vistaDashboard, #vistaCV, #vistaEditor { display: none; }
     </style>
 </head>
@@ -117,18 +105,10 @@
 
     <div id="vistaLogin">
         <div class="login-card">
-            <img src="logo.png" style="height: 70px; margin-bottom: 15px; border-radius: 12px;">
-            <h2 style="margin-bottom: 5px; font-weight: 800;">FISCALIZADORES</h2>
-            <div style="text-align: left; margin-bottom: 15px;">
-                <label class="info-label">Email de acceso</label>
-                <input type="email" id="loginEmail">
-            </div>
-            <div style="text-align: left; margin-bottom: 25px;">
-                <label class="info-label">Contraseña</label>
-                <input type="password" id="loginPass">
-            </div>
-            <button class="btn-primary" style="width: 100%;" onclick="login()">INGRESAR</button>
-            <p id="loginError" style="color: #ff4444; margin-top: 15px;"></p>
+            <img src="logo.png" style="height: 70px; margin-bottom: 15px;">
+            <h2>FISCALIZADORES</h2><br>
+            <input type="password" id="loginPass" placeholder="Contraseña">
+            <button class="btn-primary" style="width: 100%; margin-top: 15px;" onclick="login()">INGRESAR</button>
         </div>
     </div>
 
@@ -137,23 +117,16 @@
             <img src="logo.png" class="app-logo">
             <span class="logo-text">FISCALIZADORES</span>
         </div>
-        <div style="display: flex; gap: 10px;">
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">🌙</button>
-            <button onclick="logout()" style="background:none; border:none; color:#ff4444; font-weight:bold; cursor:pointer;">SALIR</button>
-        </div>
+        <button onclick="logout()" style="background:none; border:none; color:#ff4444; font-weight:bold;">SALIR</button>
     </header>
 
-    <!-- VISOR DE FOTOS CON BOTÓN CERRAR PARA EVITAR CONFLICTO CON ZOOM -->
-    <div id="imgOverlay">
-        <button onclick="cerrarFoto()" style="position: fixed; top: 20px; right: 20px; background: white; border: none; padding: 10px 15px; border-radius: 50%; font-weight: bold; z-index: 6000;">X</button>
+    <!-- VISOR DE FOTOS: Aquí se puede hacer zoom -->
+    <div id="imgOverlay" onclick="this.style.display='none'">
         <img id="imgFull">
     </div>
 
     <div id="vistaDashboard">
-        <div style="padding: 20px 40px; display: flex; gap: 15px;">
-            <input type="text" id="busqueda" placeholder="Buscar..." style="flex:1" onkeyup="buscador()">
-            <button class="btn-primary" onclick="abrirEditor()">+ NUEVO</button>
-        </div>
+        <div style="padding: 20px 40px;"><input type="text" id="busqueda" placeholder="Buscar..." onkeyup="buscador()"></div>
         <div id="gridMain" class="grid-main"></div>
     </div>
 
@@ -162,28 +135,7 @@
         <div id="cvContent" class="cv-container"></div>
     </div>
 
-    <div id="vistaEditor">
-        <div style="max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px;">
-            <h2 id="tituloEditor">Registro</h2>
-            <div style="text-align: center; margin: 20px 0;">
-                <img id="prevFoto" style="width:120px; height:120px; border-radius:50%; object-fit:cover;">
-                <input type="file" id="fileIn" onchange="subirFoto(this)" style="display:none" accept="image/*">
-                <button class="btn-outline" style="display:block; margin: 10px auto;" onclick="document.getElementById('fileIn').click()">Cambiar Foto</button>
-            </div>
-            <!-- Los mismos inputs de tu código original... -->
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                <input type="text" id="inNom" placeholder="Nombre">
-                <input type="text" id="inCong" placeholder="Congregación">
-                <select id="inNacIo" onchange="actualizarProvinciasEditor()"><option value="🇦🇷">🇦🇷 Argentina</option><option value="🇵🇾">🇵🇾 Paraguay</option><option value="🇧🇷">🇧🇷 Brasil</option></select>
-                <select id="inCiu"><option value="">Ciudad</option></select>
-                <textarea id="inHist" placeholder="Historial" style="grid-column: span 2;"></textarea>
-            </div>
-            <button class="btn-primary" style="width:100%; margin-top:20px;" onclick="guardar()">GUARDAR</button>
-        </div>
-    </div>
-
     <script>
-        // Configuración Firebase (La tuya original)
         const firebaseConfig = {
             apiKey: "AIzaSyBkP6NALOTSHGd4QVgAxHyeJzCCnOUDY6M",
             authDomain: "fiscalizadores-elite.firebaseapp.com",
@@ -196,32 +148,15 @@
         const db = firebase.firestore();
 
         let miembros = [];
-        let fotoURL = "";
-        let idEdit = null;
 
-        // FUNCIONES DE ZOOM
-        function abrirZoomFoto(src) {
-            if(!src || src.includes('placeholder')) return;
-            document.getElementById('imgFull').src = src;
-            document.getElementById('imgOverlay').style.display = 'flex';
-            // Al abrir la foto quitamos el bloqueo de zoom preventivamente
-            document.body.style.overflow = 'hidden';
-        }
-
-        function cerrarFoto() {
-            document.getElementById('imgOverlay').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        // LÓGICA DE USUARIOS
         function login() {
-            const email = document.getElementById('loginEmail').value.toLowerCase().trim();
-            const pass = document.getElementById('loginPass').value.trim();
-            if (email === "admi@com" && pass === "admigeneral.26") {
-                localStorage.setItem('fisc_session', 'active');
+            if (document.getElementById('loginPass').value === "admigeneral.26") {
+                localStorage.setItem('auth', 'true');
                 mostrarSistema();
             }
         }
+
+        function logout() { localStorage.clear(); location.reload(); }
 
         function mostrarSistema() {
             document.getElementById('vistaLogin').style.display = 'none';
@@ -232,14 +167,12 @@
         function irDashboard() { 
             document.getElementById('vistaDashboard').style.display = 'block'; 
             document.getElementById('vistaCV').style.display = 'none'; 
-            document.getElementById('vistaEditor').style.display = 'none'; 
             escuchar(); 
         }
 
         function escuchar() {
             db.collection("curriculums").onSnapshot(snap => {
-                miembros = [];
-                snap.forEach(doc => miembros.push({ id: doc.id, ...doc.data() }));
+                miembros = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 renderCiudades();
             });
         }
@@ -256,7 +189,7 @@
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
             miembros.filter(m => m.ciudad === c).forEach(m => {
                 grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || ''}" style="width:60px; height:60px; border-radius:50%; object-fit:cover;">
+                    <img src="${m.foto}" style="width:70px; height:70px; border-radius:50%; object-fit:cover;">
                     <h3>${m.nombre}</h3>
                 </div>`;
             });
@@ -268,45 +201,31 @@
             document.getElementById('vistaCV').style.display = 'block';
             document.getElementById('cvContent').innerHTML = `
                 <div class="cv-banner">
-                    <img src="${m.foto}" class="cv-photo" onclick="abrirZoomFoto(this.src)">
-                    <div style="font-size:1.5rem; font-weight:800;">${m.nombre}</div>
-                    <p>${m.cong} - ${m.ciudad}</p>
+                    <img src="${m.foto}" class="cv-photo" onclick="abrirZoom(this.src)">
+                    <h2>${m.nombre}</h2>
+                    <p>${m.cong}</p>
                 </div>
-                <div class="cv-right" style="padding:20px;">
+                <div style="padding:40px;">
                     <div class="historial-box">${m.hist || 'Sin historial'}</div>
-                    <button class="btn-primary" onclick="abrirEditor('${m.id}')">EDITAR</button>
                 </div>`;
         }
 
-        function abrirEditor(id = null) {
-            idEdit = id;
-            document.getElementById('vistaDashboard').style.display = 'none';
-            document.getElementById('vistaCV').style.display = 'none'; 
-            document.getElementById('vistaEditor').style.display = 'block';
+        // --- FUNCIÓN DE ZOOM MEJORADA ---
+        function abrirZoom(src) {
+            const overlay = document.getElementById('imgOverlay');
+            const img = document.getElementById('imgFull');
+            img.src = src;
+            overlay.style.display = 'flex';
+            // Al abrir, el body no debe moverse para que el zoom sea fluido
+            document.body.style.overflow = 'hidden';
         }
 
-        async function guardar() {
-            const d = {
-                nombre: document.getElementById('inNom').value,
-                ciudad: document.getElementById('inCiu').value,
-                cong: document.getElementById('inCong').value,
-                hist: document.getElementById('inHist').value,
-                foto: fotoURL
-            };
-            if(idEdit) await db.collection("curriculums").doc(idEdit).update(d);
-            else await db.collection("curriculums").add(d);
-            irDashboard();
-        }
+        // Al cerrar el visor devolvemos el scroll al body
+        document.getElementById('imgOverlay').addEventListener('click', function() {
+            document.body.style.overflow = 'auto';
+        });
 
-        function subirFoto(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = e => { fotoURL = e.target.result; document.getElementById('prevFoto').src = fotoURL; };
-                reader.readAsDataURL(input.files[0]);
-            }
-        }
-
-        window.onload = () => { if(localStorage.getItem('fisc_session')) mostrarSistema(); };
+        window.onload = () => { if(localStorage.getItem('auth')) mostrarSistema(); };
     </script>
 </body>
 </html>
