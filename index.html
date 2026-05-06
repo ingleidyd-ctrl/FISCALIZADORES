@@ -136,7 +136,7 @@
     </div>
 
     <header id="mainHeader">
-        <div class="logo-container" onclick="location.reload()">
+        <div class="logo-container" onclick="irTableros()">
             <img src="logo.png" alt="Logo" class="app-logo">
             <span class="logo-text">FISCALIZADORES<span style="color:var(--accent)">.</span></span>
         </div>
@@ -150,24 +150,24 @@
     <div id="imgOverlay" onclick="cerrarZoomFoto()"><img id="imgFull"></div>
     <input type="file" id="fileCong" style="display:none" onchange="procesarFotoCong(this)" accept="image/*">
 
-    <div id="vistaDashboard">
+    <div id="vistaDashboard" class="seccion-app">
         <div style="padding: 20px 40px; display: flex; gap: 15px;">
             <input type="text" id="busqueda" placeholder="Buscar por Nombre, Ciudad o Congregación..." style="flex:1" onkeyup="buscador()">
             <button class="btn-primary" onclick="abrirEditor()">+ NUEVO</button>
         </div>
         <div style="padding: 0 40px;">
-            <button id="btnBack" class="btn-outline" onclick="volverAtras()" style="display:none; margin-bottom: 20px;">← VOLVER</button>
+            <button id="btnBack" class="btn-outline" onclick="window.history.back()" style="display:none; margin-bottom: 20px;">← VOLVER</button>
             <h3 id="tituloTxt" style="font-weight: 800; margin-bottom: 10px;">Listado de Ciudades</h3>
         </div>
         <div id="gridMain" class="grid-main"></div>
     </div>
 
-    <div id="vistaCV">
-        <div style="padding: 20px 40px;"><button class="btn-outline" onclick="irDashboard()">← VOLVER AL LISTADO</button></div>
+    <div id="vistaCV" class="seccion-app">
+        <div style="padding: 20px 40px;"><button class="btn-outline" onclick="window.history.back()">← VOLVER AL LISTADO</button></div>
         <div id="cvContent" class="cv-container"></div>
     </div>
 
-    <div id="vistaEditor">
+    <div id="vistaEditor" class="seccion-app">
         <div class="editor-box" style="max-width: 850px; margin: 30px auto; background: var(--card); padding: 40px; border-radius: 20px; border: 1px solid var(--borde);">
             <h2 id="tituloEditor" style="margin-bottom: 25px;">Registro de Datos</h2>
             <div style="text-align: center; margin-bottom: 30px;">
@@ -214,7 +214,7 @@
             <div style="margin-top: 30px;">
                 <div style="display: flex; gap: 15px;">
                     <button class="btn-primary" style="flex:2" onclick="guardar()">GUARDAR CAMBIOS</button>
-                    <button class="btn-outline" style="flex:1" onclick="irDashboard()">CANCELAR</button>
+                    <button class="btn-outline" style="flex:1" onclick="window.history.back()">CANCELAR</button>
                 </div>
                 <button id="btnEliminar" class="btn-danger" style="display:none;" onclick="eliminarRegistro()">🗑️ ELIMINAR</button>
             </div>
@@ -253,6 +253,22 @@
         let nivel = "ciudades"; let ciuSel = ""; let nacSel = "";
         let congSelGlobal = ""; let congParaEditar = ""; let categoriaUsuario = "";
 
+        // --- SISTEMA DE NAVEGACIÓN TIPO APP ---
+        window.onpopstate = function() {
+            if (idEdit) { idEdit = null; irDashboard(); }
+            else if (nivel === "miembros") { verCongs(ciuSel, nacSel); }
+            else if (nivel === "congs") { renderCiudades(); }
+            else if (document.getElementById('vistaCV').style.display === 'block') { irDashboard(); }
+        };
+
+        function pushState() { history.pushState({nav: true}, ""); }
+
+        function irTableros() {
+            nivel = "ciudades"; ciuSel = ""; nacSel = ""; congSelGlobal = "";
+            renderCiudades();
+        }
+        // -------------------------------------
+
         function login() {
             const email = document.getElementById('loginEmail').value.toLowerCase().trim();
             const pass = document.getElementById('loginPass').value.trim();
@@ -270,6 +286,7 @@
             document.getElementById('vistaLogin').style.display = 'none';
             document.getElementById('mainHeader').style.display = 'flex';
             document.getElementById('userBadge').innerText = categoriaUsuario;
+            escuchar();
             irDashboard();
         }
 
@@ -291,8 +308,9 @@
         }
 
         function verCV(id) {
+            pushState();
             const m = miembros.find(x => x.id === id);
-            document.getElementById('vistaDashboard').style.display = 'none';
+            document.querySelectorAll('.seccion-app').forEach(s => s.style.display = 'none');
             document.getElementById('vistaCV').style.display = 'block';
             const edadCalculada = calcularEdad(m.fechaNac);
 
@@ -342,14 +360,19 @@
             db.collection("curriculums").onSnapshot(snap => {
                 let todos = []; snap.forEach(doc => todos.push({ id: doc.id, ...doc.data() }));
                 miembros = (categoriaUsuario === "ADMIN") ? todos : todos.filter(m => m.fisc === categoriaUsuario);
+                
+                // Actualizar la vista actual sin cambiar de nivel
                 if(nivel === "ciudades") renderCiudades();
-                else if(nivel === "congs") verCongs(ciuSel, nacSel);
-                else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal);
+                else if(nivel === "congs") verCongs(ciuSel, nacSel, true);
+                else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal, true);
             });
         }
 
         function renderCiudades() {
-            nivel = "ciudades"; document.getElementById('btnBack').style.display = 'none';
+            nivel = "ciudades"; 
+            document.querySelectorAll('.seccion-app').forEach(s => s.style.display = 'none');
+            document.getElementById('vistaDashboard').style.display = 'block';
+            document.getElementById('btnBack').style.display = 'none';
             document.getElementById('tituloTxt').innerText = "Listado de Ciudades";
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
             const combinaciones = [...new Set(miembros.map(m => JSON.stringify({c: m.ciudad.trim(), n: m.nacionalidad})))].map(s => JSON.parse(s));
@@ -362,8 +385,11 @@
             });
         }
 
-        function verCongs(c, n) {
+        function verCongs(c, n, noPush = false) {
+            if(!noPush) pushState();
             nivel = "congs"; ciuSel = c; nacSel = n; 
+            document.querySelectorAll('.seccion-app').forEach(s => s.style.display = 'none');
+            document.getElementById('vistaDashboard').style.display = 'block';
             document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = `Congregaciones en ${c}`;
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
@@ -378,8 +404,11 @@
             });
         }
 
-        function verMiembros(c, n, co) {
+        function verMiembros(c, n, co, noPush = false) {
+            if(!noPush) pushState();
             nivel = "miembros"; congSelGlobal = co; ciuSel = c; nacSel = n;
+            document.querySelectorAll('.seccion-app').forEach(s => s.style.display = 'none');
+            document.getElementById('vistaDashboard').style.display = 'block';
             document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = co;
             const grid = document.getElementById('gridMain'); grid.innerHTML = "";
@@ -391,11 +420,18 @@
             });
         }
 
-        function volverAtras() { if(nivel === "miembros") verCongs(ciuSel, nacSel); else renderCiudades(); }
-        function irDashboard() { document.getElementById('vistaDashboard').style.display = 'block'; document.getElementById('vistaCV').style.display = 'none'; document.getElementById('vistaEditor').style.display = 'none'; escuchar(); }
+        function irDashboard() { 
+            document.querySelectorAll('.seccion-app').forEach(s => s.style.display = 'none');
+            document.getElementById('vistaDashboard').style.display = 'block'; 
+            if(nivel === "ciudades") renderCiudades();
+            else if(nivel === "congs") verCongs(ciuSel, nacSel, true);
+            else if(nivel === "miembros") verMiembros(ciuSel, nacSel, congSelGlobal, true);
+        }
 
         function abrirEditor(id = null) {
-            idEdit = id; document.getElementById('vistaDashboard').style.display = 'none'; document.getElementById('vistaCV').style.display = 'none'; document.getElementById('vistaEditor').style.display = 'block';
+            idEdit = id; pushState();
+            document.querySelectorAll('.seccion-app').forEach(s => s.style.display = 'none');
+            document.getElementById('vistaEditor').style.display = 'block';
             if(id) {
                 const m = miembros.find(x => x.id === id);
                 document.getElementById('tituloEditor').innerText = "Editar Registro"; document.getElementById('btnEliminar').style.display = "block";
@@ -438,20 +474,20 @@
             };
             if(!d.ciudad || !d.nacionalidad || !d.nombre) { alert("Complete los datos principales"); return; }
             if(idEdit) await db.collection("curriculums").doc(idEdit).update(d); else await db.collection("curriculums").add(d);
-            irDashboard();
+            window.history.back();
         }
 
-        async function eliminarRegistro() { if(confirm("¿Eliminar permanentemente?")) { await db.collection("curriculums").doc(idEdit).delete(); irDashboard(); } }
+        async function eliminarRegistro() { if(confirm("¿Eliminar permanentemente?")) { await db.collection("curriculums").doc(idEdit).delete(); window.history.back(); } }
 
         function buscador() {
             const texto = document.getElementById('busqueda').value.toLowerCase().trim();
             const grid = document.getElementById('gridMain');
-            if (texto === "") { volverAtras(); return; }
+            if (texto === "") { irDashboard(); return; }
             grid.innerHTML = ""; document.getElementById('btnBack').style.display = 'inline-block';
             document.getElementById('tituloTxt').innerText = "Resultados de búsqueda";
             miembros.filter(m => m.nombre.toLowerCase().includes(texto) || m.ciudad.toLowerCase().includes(texto) || m.cong.toLowerCase().includes(texto)).forEach(m => {
                 grid.innerHTML += `<div class="card-folder" onclick="verCV('${m.id}')">
-                    <img src="${m.foto || 'https://via.placeholder.com/80'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
+                    <img src="${m.foto || 'https://via.placeholder.com/70'}" style="width:70px; height:70px; border-radius:50%; object-fit:cover; margin-bottom:10px; border: 2px solid var(--accent);">
                     <h3>${m.nombre}</h3><p style="font-size: 0.75rem; color: var(--accent);">${m.cong}</p>
                 </div>`;
             });
